@@ -3,7 +3,7 @@
 ### Gather Items Needed (Requirements):
 - Main computer: [RADXA ROCK5B](https://radxa.com/products/rock5/5b/#documentation)
 - NVME SSD (any size)
-  * _Optional:_ screw in using ? screw
+  - _Optional: screw in using ? screw_
 - MicroSD card 
 - USB Mouse & Keyboard
 - Ethernet Cable & Connection
