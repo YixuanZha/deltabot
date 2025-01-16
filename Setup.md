@@ -8,6 +8,7 @@
 - USB Mouse & Keyboard
 - Ethernet Cable & Connection
 - HDMI Cable & Display
+- USB-C cable with ≥30W Power Adapter
 
 ### Install System:
 Refer to [RADXA official 'Getting Started' Page](https://docs.radxa.com/en/rock5/rock5b/getting-started)
@@ -18,4 +19,6 @@ In short,
 - Use MicroSD card as a boot disk to flash the system’s SPI
   - Open balenaEtcher to burn the specific image you want to use (in this case Debian was used)
 - Transfer the Image file from the MicroSD card to the NVME
+
+- 
 
