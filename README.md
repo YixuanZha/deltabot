@@ -1,2 +1,2 @@
 
-To set up your RADXA ROCK5B computer refer to [SetUp](SetUp.md)
+To first set up your RADXA ROCK5B computer refer to [Setup.md](SetUp.md)
