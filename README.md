@@ -13,7 +13,7 @@ $$Insert.Photo.Here$$
 - BLAH
 
 ## How to get started
-To first set up your RADXA ROCK5B computer refer to [Setup.md](SetUp.md)
+To first set up your RADXA ROCK5B computer refer to [Setup.md](Setup.md)
 
 
 ## The Main Chasis
