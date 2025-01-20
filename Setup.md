@@ -43,7 +43,7 @@ nvme0n1     259:0    0 238.5G  0 disk
    
 ### Setting up the LIDAR:
 
-### Setting Up the Camera
+### Setting Up the Camera:
 
 ### Configure the PWM pins:
 
