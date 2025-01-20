@@ -16,7 +16,7 @@ Refer to [RADXA official 'Getting Started' Page](https://docs.radxa.com/en/rock5
 Image Downloads: [Summary of resource downloads](https://docs.radxa.com/en/rock5/rock5b/download).
 
 ### In short, 
-- Use MicroSD card as a boot disk to flash the system’s SPI.
+- Use a MicroSD card as a boot disk to flash the system’s SPI.
   - Download & Open [balenaEtcher](https://etcher.balena.io/#download-etcher) to burn the specific image you want to use (in this case Debian was used).
 - Boot up your device and login - User: radxa | Password: radxa
 - Copy the Image file from the MicroSD card into the NVME. Refer to [this page](https://docs.radxa.com/en/rock5/rock5b/getting-started/install-os/nvme).
