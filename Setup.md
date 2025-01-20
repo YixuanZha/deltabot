@@ -1,6 +1,6 @@
 # Getting Started:
 
-### Gather Items Needed (Requirements):
+### Items Needed (Requirements):
 - Main computer: [RADXA ROCK5B](https://radxa.com/products/rock5/5b/#documentation)
 - NVME SSD (any size)
   - _Optional: screw in using ? screw_
@@ -10,12 +10,12 @@
 - HDMI Cable & Display
 - USB-C cable with ≥30W Power Adapter
 
-## Install System:
+## Installing the System:
 Refer to [RADXA official 'Getting Started' Page](https://docs.radxa.com/en/rock5/rock5b/getting-started).
 
 Image Downloads: [Summary of resource downloads](https://docs.radxa.com/en/rock5/rock5b/download).
 
-#### In short, 
+### In short, 
 - Use MicroSD card as a boot disk to flash the system’s SPI.
   - Download & Open [balenaEtcher](https://etcher.balena.io/#download-etcher) to burn the specific image you want to use (in this case Debian was used).
 - Boot up your device and login - User: radxa | Password: radxa
