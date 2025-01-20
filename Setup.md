@@ -10,7 +10,7 @@
 - HDMI Cable & Display
 - USB-C cable with ≥30W Power Adapter
 
-### Install System:
+## Install System:
 Refer to [RADXA official 'Getting Started' Page](https://docs.radxa.com/en/rock5/rock5b/getting-started).
 
 Image Downloads: [Summary of resource downloads](https://docs.radxa.com/en/rock5/rock5b/download).
@@ -23,7 +23,7 @@ Image Downloads: [Summary of resource downloads](https://docs.radxa.com/en/rock5
 
 If done successfully, power off the system, remove the MicroSD card, and the system should boot from the NVME drive.
 
-#### Troubleshooting tips:
+### Troubleshooting tips:
 - Run `lsblk` in the command line, and it should output something like this if steps were done correctly:
 ```
 NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
@@ -41,11 +41,11 @@ nvme0n1     259:0    0 238.5G  0 disk
   - You can find your IP address of your board by running `ip addr show` on the command line.
     - This will display the network interfaces and their IP addresses. Look `inet` followed by an address like `192.167.x.x` or `127.x.x.x`.
    
-### Setting up the LIDAR:
+## Setting up the LIDAR:
 
-### Setting Up the Camera:
+## Setting Up the Camera:
 
-### Configure the PWM pins:
+## Configure the PWM pins:
 
 
 
