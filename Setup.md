@@ -9,6 +9,7 @@
 - Ethernet Cable & Connection
 - HDMI Cable & Display
 - USB-C cable with ≥30W Power Adapter
+- _Optional: [KKSB ROCK 5B Case with Heatsink](https://kksb-cases.com/products/kksb-rock-5b-case-with-heatsink-black-aluminum-enclosure)_
 
 ## Installing the System:
 Refer to [RADXA official 'Getting Started' Page](https://docs.radxa.com/en/rock5/rock5b/getting-started).
