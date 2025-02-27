@@ -16,9 +16,9 @@ $$Insert.Photo.Here$$
 To first set up your RADXA ROCK5B computer refer to [Setup.md](Setup.md)
 
 
-## The Main Chasis
+## The PCB/Chassis
 
-### Power Supply for the Servo Motors
+### Power Supply & Connectors
 
 ### Additional Mechanical Parts
 
