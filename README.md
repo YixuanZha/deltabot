@@ -13,8 +13,9 @@ $$Insert.Photo.Here$$
 - BLAH
 
 ## How to get started
-To first set up your RADXA ROCK5B computer refer to [Setup.md](Setup.md)
-
+- For the list of components used refer to [List.md](List.md).
+- To first set up your RADXA ROCK5B computer, and configure its GPIO pins refer to [Setup.md](Setup.md).
+- For the Delta Bot schematic, pcb, and footprint library refer to [](), [](), []().
 
 ## The PCB/Chassis
 
