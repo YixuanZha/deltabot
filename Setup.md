@@ -39,12 +39,12 @@ nvme0n1     259:0    0 238.5G  0 disk
 - Make sure to use the correct path when copying the system image onto the NVME and replace `radxa@192.167.2.66` with the correct username and IP address for you ROCK 5B board.
   - You can find your IP address of your board by running `ip addr show` on the command line.
     - This will display the network interfaces and their IP addresses. Look `inet` followed by an address like `192.167.x.x` or `127.x.x.x`.
-   
+
+## Configure the PWM pins:
+
 ## Setting up the LIDAR:
 
 ## Setting Up the Camera:
-
-## Configure the PWM pins:
 
 
 
