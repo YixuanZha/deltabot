@@ -42,6 +42,19 @@ nvme0n1     259:0    0 238.5G  0 disk
 
 ## Configure the PWM pins:
 
+activate pins using r-setup
+`ls /sys/class/pwm/pwmchipX/pwmY` to list activated pins
+
+pwmchipX → The PWM controller (varies based on hardware)
+pwmY → The PWM channel within that controller
+
+Let's use Pin 18, ie. PWM5_M2 for example:
+
+`echo 0 | sudo tee /sys/class/pwm/pwmchip5/export`
+
+
+
+
 ## Setting up the LIDAR:
 
 ## Setting Up the Camera:
