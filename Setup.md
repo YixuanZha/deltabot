@@ -44,6 +44,10 @@ nvme0n1     259:0    0 238.5G  0 disk
 
 activate pins using r-setup
 
+export pwm0
+
+`echo Y | sudo tee /sys/class/pwm/pwmchipX/export`
+
 `ls /sys/class/pwm/pwmchipX/pwmY` to list activated pins
 
 pwmchipX → The PWM controller (varies based on hardware)
