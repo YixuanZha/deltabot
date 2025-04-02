@@ -46,7 +46,7 @@ The ROCK5B exposes multiple PWM-capable pins. First enable the PWM controller an
 
 ### Step 1: Activate Pins Using `r-setup`
 
-[`r-setup`](https://github.com/radxa/rsetup) is a utility by Radxa to simplify GPIO, I2C, SPI, and PWM configuration. Use it to configure pins to their correct function.
+[`r-setup`]([https://github.com/radxa/rsetup](https://docs.radxa.com/en/rock5/rock5c/radxa-os/rsetup)) is a utility by Radxa to simplify GPIO, I2C, SPI, and PWM configuration. Use it to configure pins to their correct function.
 
 For example, to configure **Pin 18 (PWM5_M2)** for PWM output:
 
