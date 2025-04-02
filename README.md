@@ -32,7 +32,7 @@ The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single b
 ### Power Supply & Connectors
 
 ### Additional Mechanical Parts
-Additional Mechanical Parts were designed in CAD and can be accessed [here](List.md).
+Additional Mechanical Parts were designed in CAD and can be accessed [here](additional_files/rock 5B v1.f3z).
 These were used to secure the external components onto the Single PCB Chassis:
 <p align="center">
   <img src="images/bracket2.png" alt="Side View" width="400"/>
