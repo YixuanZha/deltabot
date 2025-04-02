@@ -42,9 +42,7 @@ nvme0n1     259:0    0 238.5G  0 disk
 
 ## Configure the PWM pins:
 
-## Configure PWM Pins on ROCK5B
-
-The ROCK5B exposes multiple PWM-capable pins. To use them, you must first enable the PWM controller and channel via the sysfs interface.
+The ROCK5B exposes multiple PWM-capable pins. First enable the PWM controller and channel via the sysfs interface.
 
 ### Step 1: Activate Pins Using `r-setup`
 
