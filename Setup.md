@@ -42,27 +42,51 @@ nvme0n1     259:0    0 238.5G  0 disk
 
 ## Configure the PWM pins:
 
-activate pins using r-setup
+## Configure PWM Pins on ROCK5B
 
-export pwm0
+The ROCK5B exposes multiple PWM-capable pins. To use them, you must first enable the PWM controller and channel via the sysfs interface.
 
-`echo Y | sudo tee /sys/class/pwm/pwmchipX/export`
+### Step 1: Activate Pins Using `r-setup`
 
-`ls /sys/class/pwm/pwmchipX/pwmY` to list activated pins
+[`r-setup`](https://github.com/radxa/rsetup) is a utility by Radxa to simplify GPIO, I2C, SPI, and PWM configuration. Use it to configure pins to their correct function.
+
+For example, to configure **Pin 18 (PWM5_M2)** for PWM output:
+
+### Step 2: Export & Set PWM
+
+export the correct PWM channel using sysfs. For PWM5_M2, it is pwmchip5, channel 0:
+
+`echo 0 | sudo tee /sys/class/pwm/pwmchip5/export`
+
+`ls /sys/class/pwm/pwmchipX/pwmY` to list activated pins and check if export worked.
 
 pwmchipX → The PWM controller (varies based on hardware)
 pwmY → The PWM channel within that controller
 
 Let's use Pin 18, ie. PWM5_M2 for example:
 
-`echo 0 | sudo tee /sys/class/pwm/pwmchip5/export`
+`echo 0 | tee /sys/class/pwm/pwmchip5/export`
 
 You can manually set the PWM signal by
 
 ```
-echo 20000000 | sudo tee /sys/class/pwm/pwmchip5/pwm0/period
-echo 1500000 | sudo tee /sys/class/pwm/pwmchip5/pwm0/duty_cycle
-echo 1 | sudo tee /sys/class/pwm/pwmchip5/pwm0/enable
+echo 20000000 | tee /sys/class/pwm/pwmchip5/pwm0/period
+echo 1500000 | tee /sys/class/pwm/pwmchip5/pwm0/duty_cycle
+echo 1 | tee /sys/class/pwm/pwmchip5/pwm0/enable
+```
+
+#### Note:
+- Parallax Continuous Rotation Servo Motors require a pulse range of 1.3-1.5ns and a 20ms pause between every pulse:
+• A pulse duration of 1.5 ms corresponds to a neutral position.
+• A pulse duration below 1.5 ms induces clockwise rotation
+• A pulse duration above 1.5 ms, induces counterclockwise rotation
+
+### Step 3: C++ Integration
+All the code scripts are found in [scripts](scripts)
+
+Here is a simple example of how PWM configuration would work:
+```
+
 ```
 
 ## Setting up the LIDAR:
