@@ -13,10 +13,10 @@ The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single b
 
 ### What can it do?
 
-- BLAH
-- BLAH
-- BLAH
-- BLAH
+- 360 Degree 2D LiDAR Scans
+- Precise Servo Movement 
+- 1080p Video Capture
+- Can be configured for Line Following, SLAM, Obstacle Detection, and more!
 
 ## How to get started
 - For the list of components used refer to [List.md](List.md).
@@ -32,7 +32,8 @@ The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single b
 ### Power Supply & Connectors
 
 ### Additional Mechanical Parts
-
+Additional Mechanical Parts were designed in CAD and can be accessed [here](List.md).
+These were used to secure the external components onto the Single PCB Chassis:
 <p align="center">
   <img src="images/bracket2.png" alt="Side View" width="400"/>
   <img src="images/stage.png" alt="Front View" width="400"/>
