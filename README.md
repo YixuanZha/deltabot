@@ -21,7 +21,7 @@ The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single b
 ## How to get started
 - For the list of components used refer to [List.md](List.md).
 - To first set up your RADXA ROCK5B computer, and configure its GPIO pins refer to [Setup.md](Setup.md).
-- For the Delta Bot schematic, pcb, and footprint library refer to [](), [](), []().
+- For the Delta Bot schematic, pcb, and footprint library refer to [schematic_files](schematic_files).
 
 ## The PCB/Chassis
 
