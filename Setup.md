@@ -74,10 +74,10 @@ echo 1 | tee /sys/class/pwm/pwmchip5/pwm0/enable
 ```
 
 #### Note:
-- Parallax Continuous Rotation Servo Motors require a pulse range of 1.3-1.5ns and a 20ms pause between every pulse:
-  - A pulse duration of 1.5 ms corresponds to a neutral position.
-  - A pulse duration below 1.5 ms induces clockwise rotation
-  - A pulse duration above 1.5 ms, induces counterclockwise rotation
+Parallax Continuous Rotation Servo Motors require a pulse range of 1.3-1.5ns and a 20ms pause between every pulse:
+- A pulse duration of 1.5 ms corresponds to a neutral position.
+- A pulse duration below 1.5 ms induces clockwise rotation.
+- A pulse duration above 1.5 ms, induces counterclockwise rotation.
 
 ### Step 3: C++ Integration
 All the code scripts are found in [scripts](scripts)
