@@ -3,8 +3,11 @@
 ### What is the Delta Bot?
 The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single board computer, the [Rock 5B](https://radxa.com/products/rock5/5b/), a simple [camera module](https://www.raspberrypi.com/products/camera-module-v2/), Parallax's [Continuous Rotation Servo Motors](https://www.parallax.com/product/parallax-continuous-rotation-servo-factory-centered/), and the [RPLIDAR A1](https://www.slamtec.com/en/lidar/a1), a LIDAR camera by Slamtec.
 
-![Delta Bot Side View](images/sidebot.drawio.png)
-![Delta Bot Front View](images/frontbot.drawio.png)
+<p align="center">
+  <img src="images/sidebot.png" alt="Side View" width="300"/>
+  <img src="images/frontbot.png" alt="Front View" width="300"/>
+</p>
+
 
 
 ### What can it do?
