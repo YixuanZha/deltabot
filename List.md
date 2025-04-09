@@ -10,7 +10,7 @@
 - RPi Camera Module 3 - [Raspberry Pi Camera Module 3](https://thepihut.com/products/raspberry-pi-camera-module-3?variant=42305752039619&country=GB&currency=GBP&utm_medium=product_sync&utm_source=google&utm_content=sag_organic&utm_campaign=sag_organic&gad_source=1&gbraid=0AAAAADfQ4GHKQ6kJJTtKl7UpXk53fjlMu&gclid=CjwKCAiAlPu9BhAjEiwA5NDSA7fn42saFvjk1PDMoyioz0-9xFKDwOpp7nhNTzq9qZoqG7rU4X97iRoC0W8QAvD_BwE)
 - Anker Zolo PowerBank - [Anker Zolo Power Bank, 20,000mAh 30W](https://www.amazon.co.uk/dp/B0CZ9LH53B?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
 
-### 3D -Printed:
+### 3D-Printed:
 - x2 Servo Mounting Brackets
 - Camera Mounting Bracket
 - Castor Ball Mounting Bracket
