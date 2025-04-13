@@ -12,7 +12,7 @@ The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single b
 ### Purpose & Vision
 
 <p align="center">
-  <img src="images/goas.png" alt="Goals" width="500"/>
+  <img src="images/goals.png" alt="Goals" width="500"/>
 </p>
 
 ### What can it do?
