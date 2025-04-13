@@ -48,8 +48,6 @@ The ROCK5B exposes multiple PWM-capable pins. First enable the PWM controller an
 
 [`r-setup`]([https://github.com/radxa/rsetup](https://docs.radxa.com/en/rock5/rock5c/radxa-os/rsetup)) is a utility by Radxa to simplify GPIO, I2C, SPI, and PWM configuration. Use it to configure pins to their correct function.
 
-For example, to configure **Pin 18 (PWM5_M2)** for PWM output:
-
 ### Step 2: Export & Set PWM
 
 export the correct PWM channel using sysfs. For PWM5_M2, it is pwmchip5, channel 0:
