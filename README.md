@@ -52,6 +52,7 @@ These were used to secure the external components onto the Single PCB Chassis:
 </p>
 
 ## Further Documentation
+- [RADXA ROCK 5B Geekbenchv6 Results](https://browser.geekbench.com/v6/cpu/11503510)
 
 ## Credits
 - Saleh AlMulla - 2721704A@student.gla.ac.uk
