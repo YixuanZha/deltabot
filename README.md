@@ -22,6 +22,14 @@ The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single b
 - 1080p Video Capture
 - Can be configured for Line Following, SLAM, Obstacle Detection, and more!
 
+### Video Demonstration
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=VIDEO_ID">
+    <img src="https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg" alt="Watch the video" />
+  </a>
+</p>
+
 ## How to get started
 - For the list of components used refer to [List.md](List.md).
 - To first set up your RADXA ROCK5B computer, and configure its GPIO pins refer to [Setup.md](Setup.md).
