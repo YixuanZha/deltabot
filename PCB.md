@@ -3,7 +3,7 @@
 The DeltaBot PCB was designed in **KiCad** with a double-sided layer layout. The design integrates key subsystems including the **Radxa ROCK 5B**, LiDAR sensor, camera module, and servo motors.
 
 <p float="left">
-  <img src="images/Schematic.png" width="45%" />
+  <img src="images/schematic.png" width="45%" />
 </p>
 
 ---
