@@ -58,6 +58,7 @@ To change or add to the layout, check [here](https://wiki.radxa.com/Rock5/hardwa
 
 - **J2 (LiDAR)**: 7-pin Molex  
   - UART (TX/RX), PWM for motor control, 5V & 8.34V power lines
+  - There is a useful image on the LiDAR wiring in the read.me of [this repository](https://github.com/berndporr/rplidar_rpi).
 - **J3 / J4 (Servo Motors)**: 3-pin headers  
   - 5V, GND, PWM (Left/Right)
 
