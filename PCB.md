@@ -17,7 +17,7 @@ The DeltaBot PCB was designed in **KiCad** with a double-sided layer layout. The
 
 The following summarizes the power distribution architecture:
 
-<p float="left">
+<p align="center">
   <img src="images/PowerFlowchart.drawio.png" width="65%" />
 </p>
 
