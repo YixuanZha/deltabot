@@ -21,6 +21,8 @@ The following summarizes the power distribution architecture:
   <img src="images/PowerFlowchart.drawio.png" width="65%" />
 </p>
 
+_Note: Current draw listed is based on peak operational requirements._
+
 ---
 
 ## PCB Layout
