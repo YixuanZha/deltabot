@@ -2700,12 +2700,6 @@
 		(uuid "1072b9a9-a02f-4ec0-8beb-32f04c5d4213")
 	)
 	(junction
-		(at 172.72 40.64)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "1682642a-66af-446d-8193-e3a4e4610308")
-	)
-	(junction
 		(at 66.04 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2736,12 +2730,6 @@
 		(uuid "6f61c618-b55f-45d2-8dde-9731e99a3d04")
 	)
 	(junction
-		(at 172.72 26.67)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7219b48e-d471-48cf-acbb-30e857b6ddb1")
-	)
-	(junction
 		(at 63.5 95.25)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2760,16 +2748,22 @@
 		(uuid "8e4c442d-9ced-4cfe-a2df-5c2807ae533b")
 	)
 	(junction
-		(at 180.34 31.75)
+		(at 180.34 26.67)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "95bb41a8-8f51-45e8-9fad-7c6b2883c5e2")
+		(uuid "9842b799-46c9-4ee4-b96a-d90b19dfafc0")
 	)
 	(junction
 		(at 63.5 119.38)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "9a968a56-2a7a-441d-85f7-2e1031c30d62")
+	)
+	(junction
+		(at 176.53 26.67)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b07942e7-6aee-4a41-a0ed-e10bf65ee6a6")
 	)
 	(junction
 		(at 24.13 110.49)
@@ -2865,7 +2859,7 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 39.37) (xy 180.34 40.64)
+			(xy 180.34 36.83) (xy 180.34 40.64)
 		)
 		(stroke
 			(width 0)
@@ -2902,16 +2896,6 @@
 			(type default)
 		)
 		(uuid "266a8b97-f807-424e-bcdf-a759420916bf")
-	)
-	(wire
-		(pts
-			(xy 172.72 26.67) (xy 181.61 26.67)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "29426c28-7d58-44dd-8181-79438d36d302")
 	)
 	(wire
 		(pts
@@ -3015,16 +2999,6 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 31.75) (xy 181.61 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4daa57c0-90f8-4893-a0df-95fa34f57ec1")
-	)
-	(wire
-		(pts
 			(xy 40.64 119.38) (xy 40.64 118.11)
 		)
 		(stroke
@@ -3095,7 +3069,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 40.64) (xy 172.72 40.64)
+			(xy 167.64 40.64) (xy 180.34 40.64)
 		)
 		(stroke
 			(width 0)
@@ -3155,16 +3129,6 @@
 	)
 	(wire
 		(pts
-			(xy 176.53 31.75) (xy 176.53 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "70cdbfbe-7dff-4778-9c1f-1cc21ff6dbed")
-	)
-	(wire
-		(pts
 			(xy 52.07 72.39) (xy 66.04 72.39)
 		)
 		(stroke
@@ -3172,16 +3136,6 @@
 			(type default)
 		)
 		(uuid "73386fef-4982-44dd-acb3-59f17f8f5382")
-	)
-	(wire
-		(pts
-			(xy 172.72 40.64) (xy 180.34 40.64)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7798afcc-7b2d-4ff7-99f3-586764e61764")
 	)
 	(wire
 		(pts
@@ -3245,13 +3199,13 @@
 	)
 	(wire
 		(pts
-			(xy 172.72 34.29) (xy 172.72 40.64)
+			(xy 180.34 29.21) (xy 180.34 26.67)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "87698518-29a1-4049-9c37-4fc9c70f025b")
+		(uuid "8d66ff78-66bd-4375-b23b-d8dfb6004dbf")
 	)
 	(wire
 		(pts
@@ -3282,6 +3236,26 @@
 			(type default)
 		)
 		(uuid "95cd0e0a-4b39-4e9e-8dc4-f76b6c5b042d")
+	)
+	(wire
+		(pts
+			(xy 176.53 26.67) (xy 176.53 38.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95dbd94f-4227-4647-8377-12122ff784cd")
+	)
+	(wire
+		(pts
+			(xy 176.53 26.67) (xy 180.34 26.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9619661c-7300-44a3-86f5-7a03a1c68de2")
 	)
 	(wire
 		(pts
@@ -3322,6 +3296,16 @@
 			(type default)
 		)
 		(uuid "aba9d75f-a99a-4e07-ab5a-a4efaa16b6b2")
+	)
+	(wire
+		(pts
+			(xy 180.34 26.67) (xy 181.61 26.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aec5b099-cac3-4ef3-af7a-e3ccc5668b9f")
 	)
 	(wire
 		(pts
@@ -3455,7 +3439,7 @@
 	)
 	(wire
 		(pts
-			(xy 168.91 26.67) (xy 172.72 26.67)
+			(xy 168.91 26.67) (xy 176.53 26.67)
 		)
 		(stroke
 			(width 0)
@@ -3512,16 +3496,6 @@
 			(type default)
 		)
 		(uuid "ec387ad0-e755-4b86-acc5-2ad80f1220d6")
-	)
-	(wire
-		(pts
-			(xy 176.53 31.75) (xy 180.34 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "edc6fdee-b4d2-408e-a20a-cb8cc015f3f3")
 	)
 	(wire
 		(pts
@@ -5826,7 +5800,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Polarized")
-		(at 172.72 30.48 0)
+		(at 180.34 33.02 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5834,7 +5808,7 @@
 		(dnp no)
 		(uuid "5cf61f47-7a09-4317-98cf-c8a84ad2c96d")
 		(property "Reference" "C6"
-			(at 165.354 28.448 0)
+			(at 183.642 32.512 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5843,7 +5817,7 @@
 			)
 		)
 		(property "Value" "1uF"
-			(at 165.1 30.734 0)
+			(at 183.388 34.544 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5851,8 +5825,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 173.6852 34.29 0)
+		(property "Footprint" "deltabot:C_Disc_D3.0mm_W2.0mm_P2.50mm"
+			(at 181.3052 36.83 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5861,7 +5835,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 172.72 30.48 0)
+			(at 180.34 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5870,7 +5844,7 @@
 			)
 		)
 		(property "Description" "Polarized capacitor"
-			(at 172.72 30.48 0)
+			(at 180.34 33.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5920,7 +5894,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "deltabot:C_Disc_D3.0mm_W2.0mm_P2.50mm"
 			(at 64.4652 127 0)
 			(effects
 				(font
@@ -5989,7 +5963,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "deltabot:C_Disc_D3.0mm_W2.0mm_P2.50mm"
 			(at 67.0052 72.39 0)
 			(effects
 				(font
@@ -6124,7 +6098,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "deltabot:C_Disc_D3.0mm_W2.0mm_P2.50mm"
 			(at 64.4652 102.87 0)
 			(effects
 				(font
@@ -6229,141 +6203,6 @@
 			(project ""
 				(path "/9f04e495-2040-4ae6-9603-65340a735169"
 					(reference "J1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 181.61 31.75 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "99340283-921a-49f6-93eb-25042a282b85")
-		(property "Reference" "#PWR026"
-			(at 177.8 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5V"
-			(at 184.8612 32.131 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 181.61 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 181.61 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 181.61 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "981c7761-76d4-4f64-b4a7-eb3931681212")
-		)
-		(instances
-			(project "sigmabot"
-				(path "/9f04e495-2040-4ae6-9603-65340a735169"
-					(reference "#PWR026")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C_Polarized")
-		(at 180.34 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "9d139e0b-1427-4d55-b1a6-5e87383bb098")
-		(property "Reference" "C7"
-			(at 184.658 34.544 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "1uF"
-			(at 183.642 36.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 181.3052 39.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 180.34 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Polarized capacitor"
-			(at 180.34 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "29eb3e23-2796-43ca-bc62-7e9a4abae66d")
-		)
-		(pin "1"
-			(uuid "7d8b0cc0-eb0d-44fc-b550-e0f95a957a6e")
-		)
-		(instances
-			(project "DeltaBot"
-				(path "/9f04e495-2040-4ae6-9603-65340a735169"
-					(reference "C7")
 					(unit 1)
 				)
 			)
@@ -6605,7 +6444,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "deltabot:CP_Radial_D12.5mm_P5.00mm"
 			(at 53.0352 72.39 0)
 			(effects
 				(font
@@ -6674,7 +6513,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "deltabot:C_Disc_D3.0mm_W2.0mm_P2.50mm"
 			(at 25.0952 119.38 0)
 			(effects
 				(font
