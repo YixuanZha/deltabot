@@ -3749,7 +3749,7 @@
 			)
 		)
 	)
-	(global_label "LIDAR_TX"
+	(global_label "LIDAR_RX"
 		(shape input)
 		(at 179.07 44.45 0)
 		(effects
@@ -3769,7 +3769,7 @@
 			)
 		)
 	)
-	(global_label "LIDAR_RX"
+	(global_label "LIDAR_TX"
 		(shape input)
 		(at 179.07 48.26 0)
 		(effects
