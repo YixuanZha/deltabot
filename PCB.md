@@ -25,10 +25,7 @@ _Note: Current draw listed is based on peak operational requirements._
 
 ---
 
-## PCB Layout
-- **Front layer**:   
-- **Back layer**:   
-- 
+## PCB Layout (Front & Back Layers)
 
 <p float="left">
   <img src="images/DeltaBot-F_Cu.png" width="45%" />
@@ -44,8 +41,8 @@ _Note: Current draw listed is based on peak operational requirements._
 |---------------|-------------|----------------------------------|
 | +5V Power     | 2, 4        | Supplies power to board          |
 | GND           | Multiple    | Ground reference                 |
-| LIDAR_TX      | 8           | UART TX to LiDAR                 |
-| LIDAR_RX      | 10          | UART RX from LiDAR               |
+| UART_TX      | 8           | TX to LiDAR's RX               |
+| UART_RX      | 10          | RX from LiDAR's TX              |
 | MOTO_CTRL     | 18          | PWM for LiDAR motor              |
 | PWM_L         | 32          | PWM control for left servo       |
 | PWM_R         | 33          | PWM control for right servo      |
