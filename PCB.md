@@ -27,10 +27,10 @@ _Note: Current draw listed is based on peak operational requirements._
 
 ## PCB Layout (Front & Back Layers)
 
-<p alight="center">
+<p align="center">
   <img src="images/DeltaBot-F_Cu.jpg" width="65%" />
 </p>
-<p alight="center">
+<p align="center">
   <img src="images/DeltaBot-B_Cu.jpg" width="65%" />
 </p>
 
