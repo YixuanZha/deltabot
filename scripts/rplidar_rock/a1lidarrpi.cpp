@@ -37,45 +37,77 @@ void A1Lidar::setPWMDutyCycle(int pulse_width_ns) {
 }
 
 void A1Lidar::stop() {
-	running = false;
+    running = false;
 
-	if (worker != nullptr) {
-		worker->join();
-		delete worker;
-		worker = nullptr;
-	}
+    if (drv != nullptr) {
+        // Stop scanning
+        drv->stop();  // Stops scanning but not the motor
+        std::cerr << "Scanning stopped." << std::endl;
 
-	// Try stopping via SDK (won't work if serial is down)
-	if (drv != nullptr) {
-		drv->stop();
-		drv->stopMotor();
-		RPlidarDriver::DisposeDriver(drv);
-		drv = nullptr;
-	}
+        // Stop the motor
+        drv->stopMotor();  // Actually stops the motor
+        std::cerr << "Motor stopped." << std::endl;
 
-	// FORCE STOP MOTOR with a low PWM pulse
-	setPWMDutyCycle(0);  // 1.0 ms = lowest duty = stop
-	enablePWM();                // re-enable to apply the stop signal
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	disablePWM();               // optional: disable pin after delay
+        RPlidarDriver::DisposeDriver(drv);
+        drv = nullptr;
+    }
+
+    // Disable PWM to stop motor signal
+    disablePWM();
+    std::cerr << "Motor and scanning completely stopped." << std::endl;
 }
 
+void A1Lidar::start(const char* serial_port, const unsigned rpm) {
+    if (worker) return;
 
+    desiredRPM = rpm;
 
-void A1Lidar::start(const char *serial_port, const unsigned rpm) {
-    if (worker != nullptr) return;
-
-    desiredRPM = (float)rpm;
-
-    // Initial PWM setup (neutral pulse, e.g., 1.5ms to start the motor gently)
-    updateMotorPWM(1500000);
+    // Start motor with PWM
+    updateMotorPWM(1500000);  // Start motor for LIDAR scanning
 
     drv = RPlidarDriver::CreateDriver(DRIVER_TYPE_SERIALPORT);
     if (!drv) throw "Insufficient memory for driver";
 
-    if (IS_OK(drv->connect(serial_port, 115200))) {
+    if (IS_OK(drv->connect(serial_port, 256000))) {
         rplidar_response_device_info_t devinfo;
-        if (!IS_OK(drv->getDeviceInfo(devinfo))) {
+        std::cerr << "Attempting to get device info..." << std::endl;
+        u_result op_result = drv->getDeviceInfo(devinfo);
+        std::cerr << "Result code: " << std::hex << op_result << std::endl;
+
+        if (IS_OK(op_result)) {
+            std::cerr << "Successfully retrieved device info" << std::endl;
+
+            // Get health info to check LIDAR status
+            // Delay before getting health info
+            std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for 2 seconds
+
+            rplidar_response_device_health_t healthinfo;
+            op_result = drv->getHealth(healthinfo);
+            if (IS_OK(op_result)) {
+                if (healthinfo.status == RPLIDAR_STATUS_ERROR) {
+                    std::cerr << "LIDAR internal error detected. Please reboot." << std::endl;
+                } else {
+                    std::cerr << "LIDAR health: OK" << std::endl;
+                    // Start the scan after health is confirmed
+                    drv->startScan(0, true, 0, &scanMode);
+                    std::cerr << "Scanning started!" << std::endl;
+
+                    // Start a separate thread to collect scan data
+                    running = true;
+                    worker = new std::thread([this]() { this->run(this); });
+
+                    // Wait for the user to stop the program (e.g., after some time or key press)
+                    std::this_thread::sleep_for(std::chrono::seconds(10));  // Adjust time as needed
+
+                    // Stop scanning and motor
+                    stop();
+                    std::cerr << "Scan and motor stopped." << std::endl;
+                }
+            } else {
+                std::cerr << "Error getting device health." << std::endl;
+            }
+        } else {
+            std::cerr << "Error: Cannot retrieve device info" << std::endl;
             delete drv;
             drv = nullptr;
             disablePWM();
@@ -85,17 +117,9 @@ void A1Lidar::start(const char *serial_port, const unsigned rpm) {
         disablePWM();
         throw "Cannot connect to the device";
     }
-
-    rplidar_response_device_health_t healthinfo;
-    if (!IS_OK(drv->getHealth(healthinfo))) {
-        throw "Cannot retrieve device health info";
-    }
-
-    drv->startScan(0, true, 0, &scanMode);
-
-    running = true;
-    worker = new std::thread(A1Lidar::run, this);
 }
+
+
 
 void A1Lidar::updateMotorPWM(int pulse_width_ns) {
     // Clamp PWM to valid servo pulse range (~1ms to 2ms pulse)
@@ -112,6 +136,7 @@ void A1Lidar::updateMotorPWM(int pulse_width_ns) {
 void A1Lidar::getData() {
 	size_t count = (size_t)nDistance;
 	rplidar_response_measurement_node_hq_t nodes[count];
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	u_result op_result = drv->grabScanDataHq(nodes, count);
 	if (IS_OK(op_result)) {
 		unsigned long timeNow = getTimeMS();
@@ -152,9 +177,10 @@ void A1Lidar::getData() {
 }
 
 void A1Lidar::run(A1Lidar* a1Lidar) {
-	while (a1Lidar->running) {
-		a1Lidar->getData();
-	}
-	a1Lidar->updateMotorPWM(0);
-	a1Lidar->setPWMDutyCycle(1500000);
+    while (a1Lidar->running) {
+        a1Lidar->getData();  // Keep collecting data while the system is running
+    }
+    a1Lidar->updateMotorPWM(0);  // Stop the motor once done
+    a1Lidar->setPWMDutyCycle(1500000);  // Optionally reset PWM duty cycle
 }
+

@@ -1,0 +1,6 @@
+/home/radxa/vscode_scripts/rplidar_rock/build/CMakeFiles/rebuild_cache.dir
+/home/radxa/vscode_scripts/rplidar_rock/build/CMakeFiles/edit_cache.dir
+/home/radxa/vscode_scripts/rplidar_rock/build/CMakeFiles/pwm.dir
+/home/radxa/vscode_scripts/rplidar_rock/build/CMakeFiles/printRPM.dir
+/home/radxa/vscode_scripts/rplidar_rock/build/CMakeFiles/printdata.dir
+/home/radxa/vscode_scripts/rplidar_rock/build/CMakeFiles/a1lidarrpi.dir

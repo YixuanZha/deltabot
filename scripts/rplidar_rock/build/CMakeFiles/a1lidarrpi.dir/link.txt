@@ -1,0 +1,2 @@
+/usr/bin/ar qc liba1lidarrpi.a CMakeFiles/a1lidarrpi.dir/a1lidarrpi.cpp.o CMakeFiles/a1lidarrpi.dir/rplidarsdk/rplidar_driver.cpp.o CMakeFiles/a1lidarrpi.dir/rplidarsdk/arch/linux/net_socket.cpp.o CMakeFiles/a1lidarrpi.dir/rplidarsdk/arch/linux/timer.cpp.o CMakeFiles/a1lidarrpi.dir/rplidarsdk/arch/linux/net_serial.cpp.o CMakeFiles/a1lidarrpi.dir/rplidarsdk/hal/thread.cpp.o
+/usr/bin/ranlib liba1lidarrpi.a

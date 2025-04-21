@@ -1,0 +1,1 @@
+/usr/bin/c++ -O2 -g -DNDEBUG -rdynamic CMakeFiles/printdata.dir/printdata.cpp.o -o printdata  liba1lidarrpi.a -lpthread -lrt 

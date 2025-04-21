@@ -1,0 +1,1 @@
+/usr/bin/c++ -O2 -g -DNDEBUG -rdynamic CMakeFiles/pwm.dir/pwm.cpp.o -o pwm  liba1lidarrpi.a -lpthread -lrt 
