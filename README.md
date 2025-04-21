@@ -52,7 +52,9 @@ These were used to secure the external components onto the Single PCB Chassis:
 </p>
 
 ## Further Documentation
-- [RADXA ROCK 5B Geekbenchv6 Results](https://browser.geekbench.com/v6/cpu/11503510)
+- [RADXA ROCK 5B Geekbenchv6 CPU Results](https://browser.geekbench.com/v6/cpu/11503510)
+- [RADXA ROCK 5B Geekbenchv6 GPU (OpenCL) Results](https://browser.geekbench.com/v6/cpu/11503510)
+- Scripts from rplidar_rock file were adopteed from [here.](https://github.com/berndporr/rplidar_rpi)
 
 ## Credits
 - Saleh AlMulla - 2721704A@student.gla.ac.uk
