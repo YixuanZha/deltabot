@@ -80,14 +80,7 @@ Parallax Continuous Rotation Servo Motors require a pulse range of 1.3-1.5ns and
 ### Step 3: C++ Integration
 All the code scripts are found in [scripts](scripts)
 
-Here is a simple example of how PWM configuration would work:
-```
-
-```
-
 ## Setting up the LIDAR:
-
-## Setting Up the Camera:
 
 
 
