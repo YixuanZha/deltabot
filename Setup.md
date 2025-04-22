@@ -78,9 +78,27 @@ Parallax Continuous Rotation Servo Motors require a pulse range of 1.3-1.5ns and
 - A pulse duration above 1.5 ms, induces counterclockwise rotation.
 
 ### Step 3: C++ Integration
-All the code scripts are found in [scripts](scripts)
+All the code scripts are found in [scripts](scripts).
+Including the Servo [test script](scripts/pwm_test.cpp).
 
-## Setting up the LIDAR:
+## Setting up the LIDAR (pending full integration)
+
+1. **Connect the RPLIDAR A1** to the ROCK5B using UART on `/dev/ttyS2`:
+   - TX from the LIDAR → GPIO10 (RX on ROCK5B)
+   - RX from the LIDAR → GPIO8 (TX on ROCK5B)
+
+2. Configure pins:
+   - Use rsetup to turn on the UART2_M2 and PWM_5 on the ROCK 5B
+
+3. Configure pins:
+   - Build the [rplidar_rock](scripts/rplidar_rock).
+```
+mkdir build && cd build
+cmake ..
+make -j$(nproc)
+```
+4. Run the demo:
+  - Test LIDAR startup and initialization by running `./printdata`
 
 
 
