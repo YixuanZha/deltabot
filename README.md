@@ -24,6 +24,8 @@ The Delta Bot is an open-source DIY robot AI platform that uses Radxa's single b
 
 ### Video Demonstration
 
+*A video demonstration will be added once mechanical repairs are complete.*
+
 <p align="center">
   <a href="https://www.youtube.com/watch?v=VIDEO_ID">
     <img src="https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg" alt="Watch the video" />
