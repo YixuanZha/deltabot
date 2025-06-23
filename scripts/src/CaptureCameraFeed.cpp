@@ -24,8 +24,12 @@ void CaptureCameraFeed::run()
         }
 
         cv::flip(frame,frame,0); // flip the frame
+        cv::Mat DisplayFrame;
+        int DisplayWidth = 800;
+        int DisplayHight = static_cast<int>(static_cast<double>(frame.rows * DisplayWidth) / frame.cols);
+        cv::resize(frame, DisplayFrame, cv::Size(DisplayWidth, DisplayHight));
 
-        cv::imshow("Camera Feed", frame);
+        cv::imshow("Camera Feed", DisplayFrame);
         if (cv::waitKey(1) == 27)
         {
             break;
