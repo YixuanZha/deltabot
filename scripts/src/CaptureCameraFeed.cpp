@@ -22,6 +22,9 @@ void CaptureCameraFeed::run()
             std::cerr << "ERROR: Null framed captured" << std::endl;
             break;
         }
+
+        cv::flip(frame,frame,1); // flip the frame
+
         cv::imshow("Camera Feed", frame);
         if (cv::waitKey(1) == 27)
         {
