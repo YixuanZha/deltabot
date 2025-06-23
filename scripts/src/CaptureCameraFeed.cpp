@@ -23,7 +23,7 @@ void CaptureCameraFeed::run()
             break;
         }
 
-        // cv::flip(frame,frame,1); // flip the frame
+        cv::flip(frame,frame,0); // flip the frame
 
         cv::imshow("Camera Feed", frame);
         if (cv::waitKey(1) == 27)
