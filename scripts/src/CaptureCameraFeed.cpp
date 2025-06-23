@@ -25,7 +25,7 @@ void CaptureCameraFeed::run()
 
         cv::flip(frame,frame,0); // flip the frame
         cv::Mat DisplayFrame;
-        int DisplayWidth = 800;
+        int DisplayWidth = 1050;
         int DisplayHight = static_cast<int>(static_cast<double>(frame.rows * DisplayWidth) / frame.cols);
         cv::resize(frame, DisplayFrame, cv::Size(DisplayWidth, DisplayHight));
 
