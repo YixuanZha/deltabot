@@ -18,10 +18,10 @@ int ServoMotorSetting::SpeedToHighTime(float speed) // speed range from -10 to 1
     if (speed < -10)
         speed = -10;
 
-    int neutral_time = 1500000; // When speed is 0, The high time is 1520000
+    int neutral_time = 1520000; // When speed is 0, The high time is 1520000
     int step_size = 20000;
 
-    return neutral_time + ((speed + 1) * step_size);
+    return neutral_time + (speed * step_size);
 }
 
 void ServoMotorSetting::ChangeSpeed(float speed)
