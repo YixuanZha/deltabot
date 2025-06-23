@@ -19,7 +19,7 @@ int ServoMotorSetting::SpeedToHighTimeLeft(float speed) // speed range from -10 
         speed = -10;
     // left 1523500 right 1521500
     int neutral_time = 1524000; // When speed is 0, The high time is 1520000
-    int step_size = 1000;
+    int step_size = 10000;
 
     return neutral_time + (speed * step_size);
 }
@@ -32,7 +32,7 @@ int ServoMotorSetting::SpeedToHighTimeRight(float speed) // speed range from -10
         speed = -10;
     // left 1523500 right 1521500
     int neutral_time = 1521000; // When speed is 0, The high time is 1520000
-    int step_size = 1000;
+    int step_size = 10000;
 
     return neutral_time + (speed * step_size);
 }
