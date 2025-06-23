@@ -4,17 +4,19 @@ project(libgpiod_test)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# find_package(PkgConfig REQUIRED)
-# pkg_check_modules(LIBGPIOD REQUIRED libgpiod>=1.6.0)
-
-# if(NOT LIBGPIOD_FOUND)
-#     message(FATAL_ERROR "libgpiod not found!")
-# endif()
+find_package(OpenCV REQUIRED)
+message(STATUS "DEBUG: OpenCV Include Dirs are: ${OpenCV_INCLUDE_DIRS}")
 
 set(COMMON_SOURCES
     src/Pwm.cpp
     src/ServoMotorSetting.cpp
     src/DeltaBot.cpp
+    src/CaptureCameraFeed.cpp
+)
+
+add_executable(TestCamera
+    Tests/TestCamera.cpp
+    ${COMMON_SOURCES}
 )
 
 add_executable(TestServoMotor 
@@ -32,23 +34,14 @@ add_executable(TestBotMotion
     ${COMMON_SOURCES}
 )
 
-foreach(target TestServoMotor TestSpeedChange TestBotMotion)
+foreach(target TestCamera TestServoMotor TestSpeedChange TestBotMotion)
     target_include_directories(${target} PRIVATE
-        ${LIBGPIOD_INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
-
-    target_link_directories(${target} PRIVATE
-        ${LIBGPIOD_LIBRARY_DIRS}
-    )
-
     target_link_libraries(${target} PRIVATE 
-        ${LIBGPIOD_LIBRARIES}
-    )
-
-    target_compile_options(${target} PRIVATE
-        ${LIBGPIOD_CFLAGS_OTHER}
+        ${OpenCV_LIBS}
     )
 endforeach()
 
-install(TARGETS TestServoMotor TestSpeedChange TestBotMotion RUNTIME DESTINATION bin)
+install(TARGETS TestCamera TestServoMotor TestSpeedChange TestBotMotion RUNTIME DESTINATION bin)
