@@ -24,7 +24,8 @@ public:
      * Change the speed of the motor.
      * @param  {float} speed : The speed to set for the motor.
      */
-    void ChangeSpeed(float speed);
+    void ChangeRightSpeed(float speed);
+    void ChangeLeftSpeed(float speed);
     
     /**
      * Stop the motor.
@@ -38,7 +39,8 @@ private:
      * @param  {float} speed : The speed to convert.
      * @return {int}         : The high time duration for the PWM signal.
      */
-    int SpeedToHighTime(float speed);
+    int SpeedToHighTimeLeft(float speed);
+    int SpeedToHighTimeRight(float speed);
 };
 
 #endif

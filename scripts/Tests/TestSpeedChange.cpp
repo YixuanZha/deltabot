@@ -14,8 +14,8 @@ int main(int argc, char* argv[])
 
     for(int i = 0; i <= 20; i++)
     {
-        servo_left.ChangeSpeed(speed);
-        servo_right.ChangeSpeed(speed);
+        servo_left.ChangeLeftSpeed(speed);
+        servo_right.ChangeRightSpeed(speed);
         cout << "The speed is: " << speed << endl;
         speed ++;
         std::this_thread::sleep_for(std::chrono::seconds(1));

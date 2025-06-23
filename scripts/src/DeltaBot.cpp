@@ -7,26 +7,26 @@ DeltaBot::DeltaBot()
 
 void DeltaBot::Forward(float speed)
 {
-    leftMotor.ChangeSpeed(speed);
-    rightMotor.ChangeSpeed(-speed);
+    leftMotor.ChangeLeftSpeed(speed);
+    rightMotor.ChangeRightSpeed(-speed);
 }
 
 void DeltaBot::Backward(float speed)
 {
-    leftMotor.ChangeSpeed(-speed);
-    rightMotor.ChangeSpeed(speed);
+    leftMotor.ChangeLeftSpeed(-speed);
+    rightMotor.ChangeRightSpeed(speed);
 }
 
 void DeltaBot::TurnLeft(float speed)
 {
-    leftMotor.ChangeSpeed(speed / 2.0f);
-    rightMotor.ChangeSpeed(-speed);
+    leftMotor.ChangeLeftSpeed(speed / 2.0f);
+    rightMotor.ChangeRightSpeed(-speed);
 }
 
 void DeltaBot::TurnRight(float speed)
 {
-    leftMotor.ChangeSpeed(speed);
-    rightMotor.ChangeSpeed(-speed / 2.0f);
+    leftMotor.ChangeLeftSpeed(speed);
+    rightMotor.ChangeRightSpeed(-speed / 2.0f);
 }
 
 void DeltaBot::Stop()
