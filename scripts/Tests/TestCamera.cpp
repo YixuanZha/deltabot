@@ -1,16 +1,13 @@
-#include "CaptureCameraFeed.h"
+#include "DeltaBot.h"
+
+// Main function to test the DeltaBot camera functionality
 
 int main(int argc, char* argv[])
 {
-    const int DEVICE_INDEX = 11;    
-    const int CAPTURE_WIDTH = 1280;
-    const int CAPTURE_HEIGHT = 720;
-    const int CAPTURE_FPS = 30;
-
     try
     {
-        CaptureCameraFeed camera(DEVICE_INDEX,CAPTURE_WIDTH,CAPTURE_HEIGHT,CAPTURE_FPS);
-        camera.run();
+        DeltaBot bot;
+        bot.StartCamera();
     }
     catch(const std::exception& e)
     {
