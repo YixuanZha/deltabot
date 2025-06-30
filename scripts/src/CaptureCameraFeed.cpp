@@ -45,8 +45,8 @@ std::string CaptureCameraFeed::GetGstreamPipeline(int device_index, int width, i
      return "v4l2src device=/dev/video" + std::to_string(device_index) +
            " io-mode=4 ! video/x-raw, width=" + std::to_string(width) +
            ", height=" + std::to_string(height) + ", framerate=" +
-           std::to_string(fps) + "/1 ! rkvideoconvert ! " +
-           "video/x-raw,format=BGR ! appsink";
+           std::to_string(fps) + "/1 ! videoconvert ! " +
+           "video/x-raw,format=NV12 ! appsink";
 }
 
 void CaptureCameraFeed::CalculateFPS()
