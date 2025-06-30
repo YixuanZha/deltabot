@@ -3,8 +3,8 @@
 int main(int argc, char* argv[])
 {
     const int DEVICE_INDEX = 11;    
-    const int CAPTURE_WIDTH = 1680;
-    const int CAPTURE_HEIGHT = 1050;
+    const int CAPTURE_WIDTH = 1280;
+    const int CAPTURE_HEIGHT = 720;
     const int CAPTURE_FPS = 30;
 
     try
