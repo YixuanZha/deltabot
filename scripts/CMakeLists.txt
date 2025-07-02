@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(libgpiod_test)
+project(deltabot)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -34,7 +34,12 @@ add_executable(TestBotMotion
     ${COMMON_SOURCES}
 )
 
-foreach(target TestCamera TestServoMotor TestSpeedChange TestBotMotion)
+add_executable(TestBotAndCamera
+    Tests/TestBotAndCamera.cpp
+    ${COMMON_SOURCES}
+)
+
+foreach(target TestCamera TestServoMotor TestSpeedChange TestBotMotion TestBotAndCamera)
     target_include_directories(${target} PRIVATE
         ${OpenCV_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -44,4 +49,4 @@ foreach(target TestCamera TestServoMotor TestSpeedChange TestBotMotion)
     )
 endforeach()
 
-install(TARGETS TestCamera TestServoMotor TestSpeedChange TestBotMotion RUNTIME DESTINATION bin)
+install(TARGETS TestCamera TestServoMotor TestSpeedChange TestBotMotion TestBotAndCamera RUNTIME DESTINATION bin)
