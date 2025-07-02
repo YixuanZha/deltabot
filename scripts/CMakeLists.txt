@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(OpenCV REQUIRED)
 message(STATUS "DEBUG: OpenCV Include Dirs are: ${OpenCV_INCLUDE_DIRS}")
 
+find_package(Threads REQUIRED)
+
 set(COMMON_SOURCES
     src/Pwm.cpp
     src/ServoMotorSetting.cpp
@@ -46,6 +48,7 @@ foreach(target TestCamera TestServoMotor TestSpeedChange TestBotMotion TestBotAn
     )
     target_link_libraries(${target} PRIVATE 
         ${OpenCV_LIBS}
+        Threads::Threads
     )
 endforeach()
 
