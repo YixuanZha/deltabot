@@ -6,6 +6,7 @@
 #include <string>
 #include <chrono>
 #include <sstream>
+#include <atomic>
 
 /**
  * CaptureCameraFeed class captures video feed from a camera using OpenCV and GStreamer.
@@ -20,9 +21,7 @@ public:
      * @param capture_width : The width of the captured frames.
      * @param capture_height : The height of the captured frames.
      * @param framerate : The desired frame rate for capturing video.
-     * @throws std::runtime_error if the camera cannot be opened.
      * @note The GStreamer pipeline is constructed based on the provided parameters.
-     * @note The camera feed is flipped vertically to match the expected orientation.
      */
     CaptureCameraFeed(int device_index, int capture_width, int capture_height, int framerate);
     
@@ -31,7 +30,18 @@ public:
      * It releases the camera resource if it is opened.
      */
     ~CaptureCameraFeed();
+
+    /**
+     * Starts capturing video feed from the camera in a separate thread.
+     * It continuously reads frames, calculates FPS, and displays the frames on the screen.
+     */
     void run();
+
+    /**
+     * Stops the camera feed capture.
+     * It sets the running flag to false, which will stop the capturing loop.
+     */
+    void stop();
 
 private:
     // Camera parameters
@@ -47,6 +57,8 @@ private:
 
     cv::VideoCapture cap_;
 
+    std::atomic<bool> is_running; // Flag to control the running state of the camera feed capture
+
     std::string GetGstreamPipeline(int device_index, int width, int height, int fps);
 
     /**
@@ -58,10 +70,6 @@ private:
      * Displays the current FPS on the screen.  
      */
     void PrintOnScreen();
-
-    // cv::Mat preprocess(const cv::Mat &frame);
-    
-    // void postprocess(const std::vector<float> &output_tensor, cv::Mat &frame);
 };
 
 #endif

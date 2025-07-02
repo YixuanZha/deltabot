@@ -32,8 +32,9 @@ CaptureCameraFeed::~CaptureCameraFeed()
 
 void CaptureCameraFeed::run()
 {
+    is_running = true;
     start_time = std::chrono::steady_clock::now();
-    while (true)
+    while (is_running)
     {
         if(!cap_.read(frame))
         {
@@ -53,6 +54,11 @@ void CaptureCameraFeed::run()
             break;
         }
     }
+}
+
+void CaptureCameraFeed::stop()
+{
+    is_running = false;
 }
 
 std::string CaptureCameraFeed::GetGstreamPipeline(int device_index, int width, int height, int fps)
@@ -92,15 +98,3 @@ void CaptureCameraFeed::PrintOnScreen()
                     cv::Scalar(0, 255, 0),  
                     2);  
 }
-
-// cv::Mat CaptureCameraFeed::preprocess(const cv::Mat &frame)
-// {
-//     cv::Mat resized_frame;
-//     cv::resize(frame, resized_frame, cv::Size(224, 224));
-//     return resized_frame;
-// }
-
-// void CaptureCameraFeed::postprocess(const std::vector<float> &output_tensor, cv::Mat &frame)
-// {
-//     cv::putText(frame, "Processing results...", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 255, 0), 2);
-// }
