@@ -9,25 +9,43 @@ using namespace std;
 // A simple test uses the keyboard to control the robot's forward, backward and steering, and to regulate speed (using polling)
 // Test the camera at the same time
 
-/**
- * Reads individual character input directly from the keyboard without the need for a carriage return.
- * @return {char}  : input character
- */
-char getch()
+struct termios orig_termios;
+
+void DisableRawMode()
 {
-    struct termios oldt, newt; // Save settings of old and new terminal
-    char ch;
-    tcgetattr(STDIN_FILENO, &oldt); // Get current terminal settings
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);        // Close canonical mode and echo (Do not need to press enter and the character will not be displayed on the screen)
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt); // Apply new settings
-    ch = getchar();                          // Get one character
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Restore original settings
-    return ch;
+    tcsetattr(STDIN_FILENO,TCSANOW, &orig_termios);
 }
+
+void EnableRawMode()
+{
+    tcgetattr(STDIN_FILENO,&orig_termios);
+    atexit(DisableRawMode);
+
+    struct termios raw = orig_termios;
+    raw.c_cflag &= ~(ECHO | ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &raw);
+}
+
+// /**
+//  * Reads individual character input directly from the keyboard without the need for a carriage return.
+//  * @return {char}  : input character
+//  */
+// char getch()
+// {
+//     struct termios oldt, newt; // Save settings of old and new terminal
+//     char ch;
+//     tcgetattr(STDIN_FILENO, &oldt); // Get current terminal settings
+//     newt = oldt;
+//     newt.c_lflag &= ~(ICANON | ECHO);        // Close canonical mode and echo (Do not need to press enter and the character will not be displayed on the screen)
+//     tcsetattr(STDIN_FILENO, TCSANOW, &newt); // Apply new settings
+//     ch = getchar();                          // Get one character
+//     tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Restore original settings
+//     return ch;
+// }
 
 int main(int argc, char *argv[])
 {
+    EnableRawMode();
     DeltaBot deltabot;
     bool running = true;
 
@@ -55,7 +73,9 @@ int main(int argc, char *argv[])
 
         if (activity > 0)
         {
-            char cmd = getch();
+            // char cmd = getch();
+            char cmd;
+            read(STDIN_FILENO,&cmd,1);
             switch (cmd)
             {
             case 'w':
