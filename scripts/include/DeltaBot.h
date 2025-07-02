@@ -3,6 +3,7 @@
 
 #include "ServoMotorSetting.h"
 #include "CaptureCameraFeed.h"
+#include <thread>
 
 class DeltaBot
 {
@@ -34,9 +35,16 @@ public:
     void TurnRight(float speed);
 
     /**
-     * Start the camera feed.
+     * Start the camera feed in a separate thread.
+     * This allows the robot to capture video feed while performing other operations.
      */
     void StartCamera();
+    
+    /**
+     * Stop the camera feed and join the camera thread.
+     * This ensures that the camera resources are released properly.
+     */
+    void StopCamera();
 
     /**
      * Stop the robot.
@@ -50,6 +58,7 @@ private:
 
     // Camera feed capture
     CaptureCameraFeed camera;
+    std::thread camera_thread;
 
     // Constants for servo motor settings
     static const int leftChannel = 0;

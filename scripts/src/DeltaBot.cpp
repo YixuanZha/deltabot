@@ -39,5 +39,21 @@ void DeltaBot::Stop() // Stop the robot
 
 void DeltaBot::StartCamera() // Start the camera feed
 {
-    camera.run();
+    if(camera_thread.joinable())
+    {
+        std::cout << "Camera thread is already running" << std::endl;
+        return;
+    }
+    camera_thread = std::thread(&CaptureCameraFeed::run,&camera);
+    std::cout << "Camera thread started" << std::endl;
+}
+
+void DeltaBot::StopCamera() // Stop the camera feed
+{
+    camera.stop();
+    if(camera_thread.joinable())
+    {
+        camera_thread.join();
+        std::cout << "Camera thread joined" << std::endl;
+    }
 }
