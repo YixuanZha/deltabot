@@ -27,7 +27,6 @@ void LineFollower::start()
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
-            ;
         }
 
         std::vector<double> inputs;
