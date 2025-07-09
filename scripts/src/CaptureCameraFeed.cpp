@@ -30,16 +30,38 @@ CaptureCameraFeed::~CaptureCameraFeed()
     }
 }
 
+cv::Mat CaptureCameraFeed::GetFrame()
+{
+    std::lock_guard<std::mutex> lock(frame_lock); // Lock the frame to ensure thread safety
+    return frame.clone();
+}
+
 void CaptureCameraFeed::run()
 {
     is_running = true;
     start_time = std::chrono::steady_clock::now();
     while (is_running)
     {
-        if(!cap_.read(frame))
+        cv::Mat temp_frame;
+        if(!cap_.read(temp_frame))
         {
             std::cerr << ("ERROR: frame could not be captured from the camera") << std::endl;
             break;  
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(frame_lock); // Lock the frame to ensure thread safety
+            if (temp_frame.empty())
+            {
+                std::cerr << "ERROR: Captured frame is empty." << std::endl;
+                continue; // Skip the iteration if the frame is empty
+            }
+            if (temp_frame.size() != cv::Size(frame_width, frame_height))
+            {
+                std::cerr << "ERROR: Captured frame size does not match the expected size." << std::endl;
+                continue; // Skip the iteration if the frame size does not match
+            }
+            temp_frame.copyTo(frame); // Copy the captured frame to the class member variable
         }
 
         cv::flip(frame, frame, 0); // flip the frame

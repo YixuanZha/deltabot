@@ -7,6 +7,7 @@
 #include <chrono>
 #include <sstream>
 #include <atomic>
+#include <mutex>
 
 /**
  * CaptureCameraFeed class captures video feed from a camera using OpenCV and GStreamer.
@@ -32,6 +33,13 @@ public:
     ~CaptureCameraFeed();
 
     /**
+     * Gets the captured frame from the camera.
+     * @return cv::Mat : The captured frame.
+     * It locks the frame to ensure thread safety while accessing the frame data.
+     */
+    cv::Mat GetFrame();
+
+    /**
      * Starts capturing video feed from the camera in a separate thread.
      * It continuously reads frames, calculates FPS, and displays the frames on the screen.
      */
@@ -44,6 +52,8 @@ public:
     void stop();
 
 private:
+    std::mutex frame_lock;
+
     // Camera parameters
     int frame_width; 
     int frame_height;
