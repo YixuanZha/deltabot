@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/scripts/CLDL/include/cldl",
                 "/usr/include/opencv4"
             ],
             "defines": [],
