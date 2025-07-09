@@ -34,6 +34,8 @@ public:
      */
     void TurnRight(float speed);
 
+    void SetMotorSpeed(float left_speed,float right_speed);
+
     /**
      * Start the camera feed in a separate thread.
      * This allows the robot to capture video feed while performing other operations.

@@ -37,6 +37,12 @@ void DeltaBot::Stop() // Stop the robot
     rightMotor.StopMotor();
 }
 
+void DeltaBot::SetMotorSpeed(float left_speed, float right_speed)
+{
+    leftMotor.ChangeLeftSpeed(left_speed);
+    rightMotor.ChangeRightSpeed(-right_speed);
+}
+
 void DeltaBot::StartCamera() // Start the camera feed
 {
     if(camera_thread.joinable())
