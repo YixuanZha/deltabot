@@ -133,7 +133,7 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
         outputLayer->getNeuron(0)->setInternalError(0, training_error, Neuron::Value);
         outputLayer->getNeuron(1)->setInternalError(0, -training_error, Neuron::Value);
 
-        std::vector<int> injection_layers = {lastLayerIndex};
+        std::vector<int> injection_layers = {lastLayerIndex,0};
         neuralNet->customBackProp(injection_layers, 0, 0, Neuron::Value, false);
 
         neuralNet->updateWeights();
