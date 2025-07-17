@@ -9,6 +9,7 @@ class DeltaBot
 {
 public:
     DeltaBot();
+    DeltaBot(CaptureCameraFeed& external_camera);
 
     /**
      * Move the robot forward.
@@ -59,22 +60,23 @@ private:
     ServoMotorSetting rightMotor;
 
     // Camera feed capture
-    CaptureCameraFeed camera;
+    CaptureCameraFeed* camera;
+    std::unique_ptr<CaptureCameraFeed> internal_camera_;
     std::thread camera_thread;
 
     // Constants for servo motor settings
-    static const int leftChannel = 0;
-    static const int rightChannel = 0;
+    static constexpr int leftChannel = 0;
+    static constexpr int rightChannel = 0;
     static constexpr float low_time = 20.0f;
     static constexpr float high_time = 1.52f;
-    static const int leftChipNo = 8;
-    static const int rightChipNo = 14;
+    static constexpr int leftChipNo = 8;
+    static constexpr int rightChipNo = 14;
     
     // Camera parameters
-    static const int device_index = 11;
-    static const int capture_width = 1280;
-    static const int capture_height = 720;
-    static const int capture_fps = 30;
+    static constexpr int device_index = 11;
+    static constexpr int capture_width = 1280;
+    static constexpr int capture_height = 720;
+    static constexpr int capture_fps = 30;
 };
 
 #endif

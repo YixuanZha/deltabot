@@ -3,7 +3,17 @@
 DeltaBot::DeltaBot()
     : leftMotor(leftChannel, low_time, high_time, leftChipNo),
       rightMotor(rightChannel, low_time, high_time, rightChipNo),
-      camera(device_index, capture_width, capture_height, capture_fps) // Initialize the left and right motors and the camera feed capture
+      camera(nullptr) // Initialize the left and right motors and the camera feed capture
+{
+    internal_camera_ = std::make_unique<CaptureCameraFeed>(device_index, capture_width, capture_height, capture_fps);
+    camera = internal_camera_.get();
+}
+
+DeltaBot::DeltaBot(CaptureCameraFeed &external_camera)
+    : leftMotor(leftChannel, low_time, high_time, leftChipNo),
+      rightMotor(rightChannel, low_time, high_time, rightChipNo),
+      camera(&external_camera),
+      internal_camera_(nullptr)
 {
 }
 
@@ -46,13 +56,13 @@ void DeltaBot::StartCamera() // Start the camera feed
         std::cout << "Camera thread is already running" << std::endl;
         return;
     }
-    camera_thread = std::thread(&CaptureCameraFeed::run, &camera);
+    camera_thread = std::thread(&CaptureCameraFeed::run, camera);
     std::cout << "Camera thread started" << std::endl;
 }
 
 void DeltaBot::StopCamera() // Stop the camera feed
 {
-    camera.stop();
+    camera->stop();
     if (camera_thread.joinable())
     {
         camera_thread.join();
