@@ -67,10 +67,10 @@ void CaptureCameraFeed::run()
         cv::flip(frame, frame, 0); // flip the frame
 
         frame_count++;
-        CalculateFPS(); // Calculate FPS based on the captured frames
-        PrintOnScreen(); // Display the current FPS on the screen
+        // CalculateFPS(); // Calculate FPS based on the captured frames
+        // PrintOnScreen(); // Display the current FPS on the screen
 
-        cv::imshow("Camera Feed", frame); // Show the captured frame in a window
+        // cv::imshow("Camera Feed", frame); // Show the captured frame in a window
         if (cv::waitKey(1) == 27)
         {
             break;
