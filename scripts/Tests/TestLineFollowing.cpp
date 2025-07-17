@@ -6,8 +6,8 @@
 
 int main()
 {
-    DeltaBot deltabot;
     CaptureCameraFeed camera(10,640,480,40);
+    DeltaBot deltabot(camera);
 
     std::thread camera_thread(&CaptureCameraFeed::run, &camera);
     std::cout << "Camera thread has started" << std::endl;
