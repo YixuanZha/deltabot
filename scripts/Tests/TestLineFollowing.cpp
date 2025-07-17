@@ -6,7 +6,7 @@
 
 int main()
 {
-    CaptureCameraFeed camera(10,640,480,40);
+    CaptureCameraFeed camera(11,640,480,40);
     DeltaBot deltabot(camera);
 
     std::thread camera_thread(&CaptureCameraFeed::run, &camera);
