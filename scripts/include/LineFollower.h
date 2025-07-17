@@ -34,7 +34,7 @@ private:
     const int input_segments = 7;
     float speed = 1.0f;
     int binary_threadhold = 100;
-    double learning_rate = 0.001f;
+    double learning_rate = 0.005f;
 };
 
 #endif
