@@ -114,13 +114,17 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
     double left_output = neuralNet->getOutput(0);
     double right_output = neuralNet->getOutput(1);
 
-    float left_speed = speed * (1.0f + static_cast<float>(left_output));
-    float right_speed = speed * (1.0f + static_cast<float>(right_output));
+    float left_adjustment = (float)(left_output * steering_gain);
+    float right_adjustment = (float)(right_output * steering_gain);
+
+    float left_speed = base_speed + left_adjustment;
+    float right_speed = base_speed + right_adjustment;
 
     left_speed = std::max(-10.0f, std::min(10.0f, left_speed));
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed));
 
     deltabot.SetMotorSpeed(left_speed, right_speed);
+
     std::cout << "Error: " << std::fixed << std::setprecision(2) << training_error
               << "| Net Out L/R: " << left_output << "/" << right_output
               << "| Speed L/R: " << left_speed << "/" << right_speed << std::endl;
@@ -130,10 +134,12 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
         int lastLayerIndex = neuralNet->getnLayers() - 1;
         Layer *outputLayer = neuralNet->getLayer(lastLayerIndex);
 
-        outputLayer->getNeuron(0)->setInternalError(0, training_error, Neuron::Value);
-        outputLayer->getNeuron(1)->setInternalError(0, -training_error, Neuron::Value);
+        double ampified_error = training_error * error_gain;
 
-        std::vector<int> injection_layers = {lastLayerIndex,0};
+        outputLayer->getNeuron(0)->setInternalError(0, ampified_error, Neuron::Value);
+        outputLayer->getNeuron(1)->setInternalError(0, -ampified_error, Neuron::Value);
+
+        std::vector<int> injection_layers = {lastLayerIndex, 0};
         neuralNet->customBackProp(injection_layers, 0, 0, Neuron::Value, false);
 
         neuralNet->updateWeights();
