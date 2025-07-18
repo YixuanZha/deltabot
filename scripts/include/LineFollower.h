@@ -32,9 +32,11 @@ private:
     std::unique_ptr<Net> neuralNet;
 
     const int input_segments = 7;
-    float speed = 1.0f;
+    float base_speed = 1.5f;
     int binary_threadhold = 100;
     double learning_rate = 0.005f;
+    float steering_gain = 1.5f;
+    double error_gain = 2.5;
 };
 
 #endif
