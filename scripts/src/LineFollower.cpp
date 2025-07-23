@@ -79,7 +79,7 @@ double LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<
     cv::Rect roi(0, frame.rows * 2 / 3, frame.cols, frame.rows / 3);
     cv::Mat roi_gray = gray(roi);
     // Turns a greyscale image into a binary image with only pure black and white.
-    cv::threshold(roi_gray, binary, binary_threadhold, 255, cv::THRESH_BINARY_INV);
+    cv::threshold(roi_gray, binary, binary_thresdhold, 255, cv::THRESH_BINARY_INV);
 
     inputs.clear();
     // The binarised image was cut horizontally into seven vertical bands
@@ -132,15 +132,12 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
     if (training_error != 0.0)
     {
         int lastLayerIndex = neuralNet->getnLayers() - 1;
-        Layer *outputLayer = neuralNet->getLayer(lastLayerIndex);
 
-        double ampified_error = training_error * error_gain;
+        double amplified_error = training_error * error_gain;
 
-        outputLayer->getNeuron(0)->setInternalError(0, ampified_error, Neuron::Value);
-        outputLayer->getNeuron(1)->setInternalError(0, -ampified_error, Neuron::Value);
+        std::vector<int> injection_layers = {lastLayerIndex};
 
-        std::vector<int> injection_layers = {lastLayerIndex, 0};
-        neuralNet->customBackProp(injection_layers, 0, 0, Neuron::Value, false);
+        neuralNet->masterPropagate(injection_layers, 0, Net::BACKWARD, amplified_error, Neuron::Value, false);
 
         neuralNet->updateWeights();
     }
