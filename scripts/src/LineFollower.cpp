@@ -113,11 +113,16 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
 
     double steering_output = neuralNet->getOutput(0);
 
-    float left_adjustment = (float)(-steering_output * steering_gain);
-    float right_adjustment = (float)(steering_output * steering_gain);
+    double error_derivative = training_error - last_error;
 
-    float left_speed = base_speed + left_adjustment;
-    float right_speed = base_speed + right_adjustment;
+    float p_term = steering_output * kp;
+    float d_term = error_derivative * kd;
+    float total_steering_adjustment = p_term + d_term;
+
+    last_error = training_error;
+
+    float left_speed = base_speed - total_steering_adjustment;
+    float right_speed = base_speed + total_steering_adjustment;
 
     left_speed = std::max(-10.0f, std::min(10.0f, left_speed));
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed));
