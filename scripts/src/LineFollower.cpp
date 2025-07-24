@@ -132,12 +132,16 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
     if (training_error != 0.0)
     {
         int lastLayerIndex = neuralNet->getnLayers() - 1;
+        Layer *outputLayer = neuralNet->getLayer(lastLayerIndex);
 
         double amplified_error = training_error * error_gain;
 
-        std::vector<int> injection_layers = {lastLayerIndex};
+        outputLayer->getNeuron(0)->setInternalError(0, amplified_error, Neuron::Value);
+        outputLayer->getNeuron(1)->setInternalError(0, -amplified_error, Neuron::Value);
 
-        neuralNet->masterPropagate(injection_layers, 0, Net::BACKWARD, amplified_error, Neuron::Value, false);
+        std::vector<int> injection_layers = {lastLayerIndex, 0};
+
+        neuralNet->customBackProp(injection_layers, 0, 0, Neuron::Value, false);
 
         neuralNet->updateWeights();
     }
