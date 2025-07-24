@@ -4,8 +4,8 @@ LineFollower::LineFollower(DeltaBot &bot, CaptureCameraFeed &camera)
     : deltabot(bot), cameraFeed(camera), is_running(false)
 {
     std::cout << "Initializing Neural Network..." << std::endl;
-    // Network structure: input layer(7 neurons), hidden layer(10 neurons), output layers(2 neurons)
-    int neuronsPerLayer[] = {10, 2};
+    // Network structure: input layer(7 neurons), hidden layer(10 neurons), output layers(1 neurons)
+    int neuronsPerLayer[] = {10, 1};
     // 2 layers(1 hidden layer + 1 output layer)
     neuralNet = std::make_unique<Net>(2, neuronsPerLayer, input_segments, 1);
     // Initialise network weights and activation functions
@@ -111,11 +111,10 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
     neuralNet->setInputs(inputs.data());
     neuralNet->propInputs();
 
-    double left_output = neuralNet->getOutput(0);
-    double right_output = neuralNet->getOutput(1);
+    double steering_output = neuralNet->getOutput(0);
 
-    float left_adjustment = (float)(left_output * steering_gain);
-    float right_adjustment = (float)(right_output * steering_gain);
+    float left_adjustment = (float)(-steering_output * steering_gain);
+    float right_adjustment = (float)(steering_output * steering_gain);
 
     float left_speed = base_speed + left_adjustment;
     float right_speed = base_speed + right_adjustment;
@@ -125,20 +124,21 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
 
     deltabot.SetMotorSpeed(left_speed, right_speed);
 
-    std::cout << "Error: " << std::fixed << std::setprecision(2) << training_error
-              << "| Net Out L/R: " << left_output << "/" << right_output
-              << "| Speed L/R: " << left_speed << "/" << right_speed << std::endl;
+    double network_error = training_error - steering_output;
 
     if (training_error != 0.0)
     {
+        double amplified_error = network_error * error_gain;
+
         int lastLayerIndex = neuralNet->getnLayers() - 1;
-
-        double amplified_error = training_error * error_gain;
-
-        std::vector<int> injection_layers = {lastLayerIndex, 0};
-
+        std::vector<int> injection_layers = {lastLayerIndex};
         neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false);
 
         neuralNet->updateWeights();
     }
+
+    std::cout << "Visual Err: " << std::fixed << std::setprecision(2) << training_error
+              << "| Net Out: " << steering_output
+              << "| Net Err: " << network_error
+              << "| Speed L/R: " << left_speed << "/" << right_speed << std::endl;
 }
