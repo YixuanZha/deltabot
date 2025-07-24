@@ -4,6 +4,7 @@
 #include "DeltaBot.h"
 #include "CaptureCameraFeed.h"
 #include "Net.h"
+#include "CameraFPSTracker.h"
 #include <opencv2/opencv.hpp>
 #include <atomic>
 #include <thread>
@@ -67,6 +68,7 @@ private:
     // Reference to the DeltaBot and CaptureCameraFeed instances
     DeltaBot &deltabot;
     CaptureCameraFeed &cameraFeed;
+    CameraFPSTracker fpsTracker;
 
     RobotState currentState = FOLLOWING; // Initial state is following the line
     double last_known_error = 0.0; // Last known error for line following

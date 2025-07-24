@@ -28,6 +28,7 @@ void LineFollower::start()
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
+        cv::flip(frame, frame, 0);
 
         std::vector<double> inputs;
         double error_near = 0.0, error_far = 0.0; // Initialize errors
@@ -72,6 +73,12 @@ void LineFollower::start()
             }
             break;
         }
+
+        fpsTracker.tick();
+        std::string fps_text = fpsTracker.getFPSText();
+        cv::putText(frame, fps_text, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
+
+        cv::imshow("Camera Feed", frame);
         if (cv::waitKey(1) == 27)
         {
             stop();
@@ -107,10 +114,10 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV); // Invert the binary image
 
     cv::Rect roi_near_rect(0, frame.rows * 5 / 6, frame.cols, frame.rows / 6); // Near segment at the bottom
-    cv::Rect roi_far_rect(0, frame.rows * 3 / 6, frame.cols, frame.rows / 6); // Far segment in the middle
+    cv::Rect roi_far_rect(0, frame.rows * 3 / 6, frame.cols, frame.rows / 6);  // Far segment in the middle
 
     cv::Mat roi_near = binary(roi_near_rect); // Extract the near segment
-    cv::Mat roi_far = binary(roi_far_rect); // Extract the far segment
+    cv::Mat roi_far = binary(roi_far_rect);   // Extract the far segment
 
     cv::Moments m_near = cv::moments(roi_near, true); // Calculate moments for the near segment
     cv::Moments m_far = cv::moments(roi_far, true);   // Calculate moments for the far segment
@@ -148,7 +155,6 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
 
     cv::rectangle(frame, roi_near_rect, cv::Scalar(0, 255, 0), 2);
     cv::rectangle(frame, roi_far_rect, cv::Scalar(0, 0, 255), 2);
-    cv::imshow("Camera Feed", frame);
 
     return line_found_near;
 }
@@ -165,7 +171,7 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
     float d_term = error_derivative * derivative_gain; // Derivative term for the controller
 
     double heading_error = error_far - error_near; // Calculate the heading error based on the near and far segment errors
-    float h_term = heading_error * heading_gain; // Heading term for the controller
+    float h_term = heading_error * heading_gain;   // Heading term for the controller
 
     float total_steering_adjustment = p_term + h_term + d_term; // Total steering adjustment based on the controller
 
@@ -176,7 +182,7 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
 
     left_speed = std::max(-10.0f, std::min(10.0f, left_speed));
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed)); // Clamp the speed values to a range of -10 to 10
-    deltabot.SetMotorSpeed(left_speed, right_speed); // Set the motor speeds based on the calculated adjustments
+    deltabot.SetMotorSpeed(left_speed, right_speed);              // Set the motor speeds based on the calculated adjustments
 
     double network_error = error_near - nn_steering_output;
     double amplified_error = network_error * error_gain;
