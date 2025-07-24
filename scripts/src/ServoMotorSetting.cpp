@@ -10,15 +10,13 @@ ServoMotorSetting::~ServoMotorSetting()
     pwm.disable();
 }
 
-// high time range from 1.3ms to 1.7ms: 1.3 is full speed clockwise, 1.52 is no rotation, 1.7 is full speed counterclockwise
 int ServoMotorSetting::SpeedToHighTimeLeft(float speed) // speed range from -10 to 10, 0 is stop
 {
     if (speed > 10)
         speed = 10;
     if (speed < -10)
         speed = -10;
-    // left 1523500 right 1521500
-    int neutral_time = 1524000; // When speed is 0, The high time is 1520000
+    int neutral_time = 1524000; // When speed is 0, The high time is 1524000
     int step_size = 10000;
 
     return neutral_time + (speed * step_size);
@@ -30,8 +28,7 @@ int ServoMotorSetting::SpeedToHighTimeRight(float speed) // speed range from -10
         speed = 10;
     if (speed < -10)
         speed = -10;
-    // left 1523500 right 1521500
-    int neutral_time = 1521000; // When speed is 0, The high time is 1520000
+    int neutral_time = 1521000; // When speed is 0, The high time is 1521000
     int step_size = 10000;
 
     return neutral_time + (speed * step_size);
