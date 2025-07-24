@@ -15,6 +15,7 @@ set(COMMON_SOURCES
     src/DeltaBot.cpp
     src/CaptureCameraFeed.cpp
     src/LineFollower.cpp
+    src/CameraFPSTracker.cpp
 )
 
 set(CLDL_SOURCES
@@ -22,12 +23,6 @@ set(CLDL_SOURCES
     CLDL/lib/Layer.cpp
     CLDL/lib/Net.cpp
     CLDL/lib/Neuron.cpp
-)
-
-add_executable(TestCamera
-    Tests/TestCamera.cpp
-    ${COMMON_SOURCES}
-    ${CLDL_SOURCES}
 )
 
 add_executable(TestServoMotor 
@@ -48,19 +43,13 @@ add_executable(TestBotMotion
     ${CLDL_SOURCES}
 )
 
-add_executable(TestBotAndCamera
-    Tests/TestBotAndCamera.cpp
-    ${COMMON_SOURCES}
-    ${CLDL_SOURCES}
-)
-
 add_executable(TestLineFollowing
     Tests/TestLineFollowing.cpp
     ${COMMON_SOURCES}
     ${CLDL_SOURCES}
 )
 
-foreach(target TestCamera TestServoMotor TestSpeedChange TestBotMotion TestBotAndCamera TestLineFollowing)
+foreach(target TestServoMotor TestSpeedChange TestBotMotion TestLineFollowing)
     target_include_directories(${target} PRIVATE
         ${OpenCV_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -72,4 +61,4 @@ foreach(target TestCamera TestServoMotor TestSpeedChange TestBotMotion TestBotAn
     )
 endforeach()
 
-install(TARGETS TestCamera TestServoMotor TestSpeedChange TestBotMotion TestBotAndCamera TestLineFollowing RUNTIME DESTINATION bin)
+install(TARGETS TestServoMotor TestSpeedChange TestBotMotion TestLineFollowing RUNTIME DESTINATION bin)
