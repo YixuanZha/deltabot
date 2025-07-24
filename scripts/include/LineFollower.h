@@ -34,9 +34,9 @@ private:
     const int input_segments = 7;
     float base_speed = 1.0f;
     int binary_thresdhold = 100;
-    double learning_rate = 0.005f;
+    double learning_rate = 0.01f;
     float steering_gain = 1.5f;
-    double error_gain = 2.5;
+    double error_gain = 5;
 };
 
 #endif
