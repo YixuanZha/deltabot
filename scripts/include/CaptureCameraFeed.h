@@ -8,6 +8,7 @@
 #include <sstream>
 #include <atomic>
 #include <mutex>
+#include <thread>
 
 /**
  * CaptureCameraFeed class captures video feed from a camera using OpenCV and GStreamer.
@@ -58,7 +59,6 @@ private:
     int frame_width; 
     int frame_height;
     int frame_count;
-    double fps_to_display;
 
     // Frame to capture video feed
     cv::Mat frame;
@@ -71,15 +71,6 @@ private:
 
     std::string GetGstreamPipeline(int device_index, int width, int height, int fps);
 
-    /**
-     * Calculates the frames per second (FPS) of the captured video feed.
-     */
-    void CalculateFPS();
-
-    /**
-     * Displays the current FPS on the screen.  
-     */
-    void PrintOnScreen();
 };
 
 #endif
