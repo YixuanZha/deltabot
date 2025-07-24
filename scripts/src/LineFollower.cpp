@@ -30,7 +30,48 @@ void LineFollower::start()
         }
 
         std::vector<double> inputs;
-        double training_error = ProcessFrameAndGetInputs(frame, inputs);
+        double training_error = 0.0;
+        bool line_found = ProcessFrameAndGetInputs(frame, inputs, training_error);
+
+        switch (current_state)
+        {
+        case FOLLOWING:
+            if (line_found)
+            {
+                UpdateAndTrain(inputs, training_error);
+                if (std::abs(training_error) > 0.1)
+                {
+                    last_known_error = training_error;
+                }
+            }
+            else
+            {
+                current_state = SEARCHING_TURN;
+                std::cout << "Line lost!" << std::endl;
+                deltabot.Stop();
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+            break;
+        case SEARCHING_TURN:
+            if (line_found)
+            {
+                current_state = FOLLOWING;
+                std::cout << "Line re-found!" << std::endl;
+            }
+            else
+            {
+                float turn_speed = 2.0f;
+                if (last_known_error > 0)
+                {
+                    deltabot.SetMotorSpeed(turn_speed, -turn_speed);
+                }
+                else
+                {
+                    deltabot.SetMotorSpeed(-turn_speed, turn_speed);
+                }
+            }
+            break;
+        }
 
         if (!inputs.empty() && training_error != 0.0)
         {
@@ -69,7 +110,7 @@ void LineFollower::stop()
 // |density:0.0|    0.0    |    0.2    |    0.2    |    0.0    |    0.0    |    0.0    |
 // +-----------+-----------+-----------+-----------+-----------+-----------+-----------+
 
-double LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs)
+bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs, double &training_error)
 {
     cv::Mat gray, binary;
     // Converting colour image to greyscale
@@ -94,16 +135,20 @@ double LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<
     }
 
     cv::Moments m = cv::moments(binary, true);
-    double training_error = 0.0;
-    if (m.m00 > 0) // m00 -> sum of white pixel points
+    if (m.m00 > 100) // m00 -> sum of white pixel points
     {
         double cx = m.m10 / m.m00; // cx -> x-coordinate of the centre of mass , m10 -> the cumulative sum of the x-coordinates of the white pixels
         double center = binary.cols / 2.0;
         training_error = (cx - center) / center;
+        cv::imshow("Binary ROI", binary);
+        return true;
     }
-
-    cv::imshow("Binary ROI", binary);
-    return training_error;
+    else
+    {
+        training_error = 0.0;
+        cv::imshow("Binary ROI", binary);
+        return false;
+    }
 }
 
 void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double training_error)
@@ -136,7 +181,7 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double trai
         double amplified_error = network_error * error_gain;
 
         int lastLayerIndex = neuralNet->getnLayers() - 1;
-        std::vector<int> injection_layers = {lastLayerIndex,0};
+        std::vector<int> injection_layers = {lastLayerIndex, 0};
         neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false);
 
         neuralNet->updateWeights();

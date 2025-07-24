@@ -11,6 +11,12 @@
 #include <algorithm>
 #include <iomanip>
 
+enum RobotState
+{
+    FOLLOWING,
+    SEARCHING_TURN
+};
+
 class LineFollower
 {
 public:
@@ -21,12 +27,16 @@ public:
     void stop();
 
 private:
-    double ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs);
+    bool ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs,double& training_error);
 
     void UpdateAndTrain(const std::vector<double> &inputs, double training_error);
 
     DeltaBot &deltabot;
     CaptureCameraFeed &cameraFeed;
+
+    RobotState current_state = FOLLOWING;
+    double last_known_error = 0.0;
+
     std::atomic<bool> is_running;
 
     std::unique_ptr<Net> neuralNet;
