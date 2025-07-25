@@ -113,8 +113,8 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
     cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV); // Invert the binary image
 
-    cv::Rect roi_near_rect(0, frame.rows * 5 / 6, frame.cols, frame.rows / 6); // Near segment at the bottom
-    cv::Rect roi_far_rect(0, frame.rows * 3 / 6, frame.cols, frame.rows / 6);  // Far segment in the middle
+    cv::Rect roi_near_rect(0, frame.rows * 3 / 4, frame.cols, frame.rows / 4); // Near segment at the bottom
+    cv::Rect roi_far_rect(0, frame.rows * 2 / 4, frame.cols, frame.rows / 4);  // Far segment in the middle
 
     cv::Mat roi_near = binary(roi_near_rect); // Extract the near segment
     cv::Mat roi_far = binary(roi_far_rect);   // Extract the far segment
