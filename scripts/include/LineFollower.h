@@ -31,6 +31,8 @@ public:
      */
     LineFollower(DeltaBot &bot, CaptureCameraFeed &camera);
 
+    ~LineFollower();
+
     /**
      * @brief Starts the line following and learning process
      */
