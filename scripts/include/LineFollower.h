@@ -85,7 +85,7 @@ private:
     const static constexpr int output_layer = 1;
 
     // figure configuration
-    float base_speed = 1.0f;
+    float base_speed = 1.5f;
     int binary_threshold = 100;
 
     // learning rate and error gain
@@ -95,7 +95,7 @@ private:
     // controller parameters
     double last_error = 0.0; 
     float proportional_gain = 0.8f; // Proportional gain for the controller
-    float derivative_gain = 0.4f; // Derivative gain for the controller
+    float derivative_gain = 0.3f; // Derivative gain for the controller
     float heading_gain = 0.4f; // Heading gain for the controller
 };
 
