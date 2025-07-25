@@ -96,7 +96,7 @@ private:
     double last_error = 0.0; 
     float proportional_gain = 0.8f; // Proportional gain for the controller
     float derivative_gain = 0.3f; // Derivative gain for the controller
-    float heading_gain = 0.4f; // Heading gain for the controller
+    float heading_gain = 0.6f; // Heading gain for the controller
 };
 
 #endif
