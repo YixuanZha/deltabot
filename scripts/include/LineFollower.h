@@ -86,6 +86,7 @@ private:
 
     // figure configuration
     float base_speed = 1.5f;
+    int binary_threshold = 100;
 
     // learning rate and error gain
     double learning_rate = 0.01f;
