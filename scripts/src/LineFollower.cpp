@@ -49,6 +49,7 @@ void LineFollower::start()
             {
                 currentState = SEARCHING_TURN;
                 std::cout << "Line lost!" << std::endl;
+                heading_error_integral = 0.0;
                 deltabot.Stop();
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
@@ -58,6 +59,8 @@ void LineFollower::start()
             {
                 currentState = FOLLOWING;
                 std::cout << "Line re-found!" << std::endl;
+                last_error = 0.0;
+                heading_error_integral = 0.0;
             }
             else
             {
@@ -111,7 +114,7 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
 {
     cv::Mat gray, binary;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV); // Invert the binary image
+    cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, 11, 2);
 
     cv::Rect roi_near_rect(0, frame.rows * 3 / 4, frame.cols, frame.rows / 4); // Near segment at the bottom
     cv::Rect roi_far_rect(0, frame.rows * 2 / 4, frame.cols, frame.rows / 4);  // Far segment in the middle
@@ -173,7 +176,12 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
     double heading_error = error_far - error_near; // Calculate the heading error based on the near and far segment errors
     float h_term = heading_error * heading_gain;   // Heading term for the controller
 
-    float total_steering_adjustment = p_term + h_term + d_term; // Total steering adjustment based on the controller
+    heading_error_integral += heading_error;
+    double integral_limit = 20.0;
+    heading_error_integral = std::max(-integral_limit,std::min(integral_limit,heading_error_integral));
+    float i_term = heading_error_integral * integral_gain;
+
+    float total_steering_adjustment = p_term + h_term + d_term + i_term; // Total steering adjustment based on the controller
 
     last_error = error_near; // Update the last error for the next iteration
 

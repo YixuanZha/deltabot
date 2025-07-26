@@ -86,7 +86,6 @@ private:
 
     // figure configuration
     float base_speed = 1.5f;
-    int binary_threshold = 100;
 
     // learning rate and error gain
     double learning_rate = 0.01f;
@@ -94,9 +93,11 @@ private:
 
     // controller parameters
     double last_error = 0.0; 
+    double heading_error_integral = 0.0;
     float proportional_gain = 0.8f; // Proportional gain for the controller
     float derivative_gain = 0.3f; // Derivative gain for the controller
-    float heading_gain = 0.6f; // Heading gain for the controller
+    float heading_gain = 0.8f; // Heading gain for the controller
+    float integral_gain = 0.1f;
 };
 
 #endif
