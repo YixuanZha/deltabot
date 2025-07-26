@@ -176,13 +176,13 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
     double heading_error = error_far - error_near; // Calculate the heading error based on the near and far segment errors
     float h_term = heading_error * heading_gain;   // Heading term for the controller
 
-    heading_error_integral += heading_error;
-    double integral_limit = 20.0;
-    heading_error_integral = std::max(-integral_limit,std::min(integral_limit,heading_error_integral));
-    float i_term = heading_error_integral * integral_gain;
+    // heading_error_integral += heading_error;
+    // double integral_limit = 20.0;
+    // heading_error_integral = std::max(-integral_limit,std::min(integral_limit,heading_error_integral));
+    // float i_term = heading_error_integral * integral_gain;
 
-    float total_steering_adjustment = p_term + h_term + d_term + i_term; // Total steering adjustment based on the controller
-
+    // float total_steering_adjustment = p_term + h_term + d_term + i_term; // Total steering adjustment based on the controller
+    float total_steering_adjustment = p_term + h_term + d_term;
     last_error = error_near; // Update the last error for the next iteration
 
     float left_speed = base_speed - total_steering_adjustment;
