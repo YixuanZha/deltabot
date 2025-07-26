@@ -40,6 +40,8 @@ public:
      */
     cv::Mat GetFrame();
 
+    long GetFrameId() const;
+
     /**
      * Starts capturing video feed from the camera in a separate thread.
      * It continuously reads frames, calculates FPS, and displays the frames on the screen.
@@ -68,6 +70,7 @@ private:
     cv::VideoCapture cap_;
 
     std::atomic<bool> is_running; // Flag to control the running state of the camera feed capture
+    std::atomic<long> frame_id;
 
     std::string GetGstreamPipeline(int device_index, int width, int height, int fps);
 

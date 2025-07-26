@@ -1,7 +1,7 @@
 #include "CaptureCameraFeed.h"
 
 CaptureCameraFeed::CaptureCameraFeed(int device_index, int capture_width, int capture_height, int framerate)
-    : frame_width(capture_width), frame_height(capture_height), frame_count(0) // Initialize camera parameters
+    : frame_width(capture_width), frame_height(capture_height), frame_count(0), frame_id(0) // Initialize camera parameters
 {
     std::string pipeline = GetGstreamPipeline(device_index, capture_width, capture_height, framerate); // Construct GStreamer pipeline string
     if (pipeline.empty())
@@ -36,13 +36,18 @@ cv::Mat CaptureCameraFeed::GetFrame()
     return frame.clone();
 }
 
+long CaptureCameraFeed::GetFrameId() const
+{
+    return frame_id;
+}
+
 void CaptureCameraFeed::run()
 {
     is_running = true;
     while (is_running)
     {
         cv::Mat temp_frame;
-        if (!cap_.read(temp_frame))
+        if (!cap_.read(temp_frame) || temp_frame.empty())
         {
             std::cerr << ("frame could not be captures from the camera") << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -52,6 +57,7 @@ void CaptureCameraFeed::run()
         {
             std::lock_guard<std::mutex> lock(frame_lock);
             frame = temp_frame;
+            frame_id++;
         }
     }
 }
