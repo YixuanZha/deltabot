@@ -16,7 +16,7 @@
 // Enum to represent the state of the robot
 enum RobotState
 {
-    FOLLOWING, // Following the line
+    FOLLOWING,     // Following the line
     SEARCHING_TURN // Searching for the line by turning
 };
 /**
@@ -25,16 +25,15 @@ enum RobotState
 class LineFollower
 {
 public:
+    static std::atomic<bool> shutdown_flag;
+
+    static void signalHandler(int siganl);
     /**
      * @brief Constructor for LineFollower
      * @param bot : Reference to the DeltaBot instance for controlling the robot
      * @param camera : Reference to the CaptureCameraFeed instance for capturing video feed
      */
     LineFollower(DeltaBot &bot, CaptureCameraFeed &camera);
-
-    static std::atomic<bool> shutdown_flag;
-
-    static void signalHandler(int siganl);
 
     /**
      * @brief Starts the line following and learning process
@@ -76,7 +75,7 @@ private:
     CameraFPSTracker fpsTracker;
 
     RobotState currentState = FOLLOWING; // Initial state is following the line
-    double last_known_error = 0.0; // Last known error for line following
+    double last_known_error = 0.0;       // Last known error for line following
 
     std::atomic<bool> is_running; // Flag to control the running state of the line follower
 
@@ -98,11 +97,11 @@ private:
     double error_gain = 5;
 
     // controller parameters
-    double last_error = 0.0; 
+    double last_error = 0.0;
     double heading_error_integral = 0.0;
     float proportional_gain = 0.8f; // Proportional gain for the controller
-    float derivative_gain = 0.3f; // Derivative gain for the controller
-    float heading_gain = 0.4f; // Heading gain for the controller
+    float derivative_gain = 0.3f;   // Derivative gain for the controller
+    float heading_gain = 0.4f;      // Heading gain for the controller
     float integral_gain = 0.0f;
 };
 

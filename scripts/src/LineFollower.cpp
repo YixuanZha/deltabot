@@ -1,5 +1,11 @@
 #include "LineFollower.h"
 
+void LineFollower::signalHandler(int signal)
+{
+    std::cout << "\nInterrupt signal received, Shutting down" << std::endl;
+    shutdown_flag = true;    
+}
+
 LineFollower::LineFollower(DeltaBot &bot, CaptureCameraFeed &camera)
     : deltabot(bot), cameraFeed(camera), is_running(false)
 {
@@ -14,12 +20,6 @@ LineFollower::LineFollower(DeltaBot &bot, CaptureCameraFeed &camera)
     // set learning rate
     neuralNet->setLearningRate(learning_rate);
     std::cout << "Neural network initialisation complete!" << std::endl;
-}
-
-void LineFollower::signalHandler(int signal)
-{
-    std::cout << "\nInterrupt signal received, Shutting down" << std::endl;
-    shutdown_flag = true;    
 }
 
 void LineFollower::start()
