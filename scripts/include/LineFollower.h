@@ -11,6 +11,7 @@
 #include <memory>
 #include <algorithm>
 #include <iomanip>
+#include <csignal>
 
 // Enum to represent the state of the robot
 enum RobotState
@@ -30,6 +31,10 @@ public:
      * @param camera : Reference to the CaptureCameraFeed instance for capturing video feed
      */
     LineFollower(DeltaBot &bot, CaptureCameraFeed &camera);
+
+    static std::atomic<bool> shutdown_flag;
+
+    static void signalHandler(int siganl);
 
     /**
      * @brief Starts the line following and learning process

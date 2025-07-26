@@ -3,6 +3,7 @@
 LineFollower::LineFollower(DeltaBot &bot, CaptureCameraFeed &camera)
     : deltabot(bot), cameraFeed(camera), is_running(false)
 {
+    signal(SIGINT,LineFollower::signalHandler);
     std::cout << "Initializing Neural Network..." << std::endl;
     // Network structure: input layer(7 neurons), hidden layer(10 neurons), output layers(1 neurons)
     int neuronsPerLayer[] = {hidden_neurons, output_neurons};
@@ -15,12 +16,19 @@ LineFollower::LineFollower(DeltaBot &bot, CaptureCameraFeed &camera)
     std::cout << "Neural network initialisation complete!" << std::endl;
 }
 
+void LineFollower::signalHandler(int signal)
+{
+    std::cout << "\nInterrupt signal received, Shutting down" << std::endl;
+    shutdown_flag = true;    
+}
+
 void LineFollower::start()
 {
     is_running = true;
+    shutdown_flag = false;
     std::cout << "Line following and learing start..." << std::endl;
 
-    while (is_running)
+    while (is_running && !shutdown_flag)
     {
         cv::Mat frame = cameraFeed.GetFrame();
         if (frame.empty())
