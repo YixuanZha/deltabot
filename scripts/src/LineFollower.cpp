@@ -1,5 +1,7 @@
 #include "LineFollower.h"
 
+std::atomic<bool> LineFollower::shutdown_flag(false);
+
 void LineFollower::signalHandler(int signal)
 {
     std::cout << "\nInterrupt signal received, Shutting down" << std::endl;
