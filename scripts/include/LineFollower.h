@@ -94,11 +94,11 @@ private:
 
     // controller parameters
     double last_error = 0.0; 
-    // double heading_error_integral = 0.0;
+    double heading_error_integral = 0.0;
     float proportional_gain = 0.8f; // Proportional gain for the controller
     float derivative_gain = 0.3f; // Derivative gain for the controller
-    float heading_gain = 0.8f; // Heading gain for the controller
-    // float integral_gain = 0.1f;
+    float heading_gain = 0.4f; // Heading gain for the controller
+    float integral_gain = 0.1f;
 };
 
 #endif
