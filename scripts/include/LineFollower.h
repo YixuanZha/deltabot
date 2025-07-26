@@ -77,6 +77,8 @@ private:
     RobotState currentState = FOLLOWING; // Initial state is following the line
     double last_known_error = 0.0;       // Last known error for line following
 
+    long last_process_frame_id = -1;
+
     std::atomic<bool> is_running; // Flag to control the running state of the line follower
 
     std::unique_ptr<Net> neuralNet; // Neural network for line following

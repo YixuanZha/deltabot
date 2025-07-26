@@ -5,13 +5,13 @@ std::atomic<bool> LineFollower::shutdown_flag(false);
 void LineFollower::signalHandler(int signal)
 {
     std::cout << "\nInterrupt signal received, Shutting down" << std::endl;
-    shutdown_flag = true;    
+    shutdown_flag = true;
 }
 
 LineFollower::LineFollower(DeltaBot &bot, CaptureCameraFeed &camera)
     : deltabot(bot), cameraFeed(camera), is_running(false)
 {
-    signal(SIGINT,LineFollower::signalHandler);
+    signal(SIGINT, LineFollower::signalHandler);
     std::cout << "Initializing Neural Network..." << std::endl;
     // Network structure: input layer(7 neurons), hidden layer(10 neurons), output layers(1 neurons)
     int neuronsPerLayer[] = {hidden_neurons, output_neurons};
@@ -32,66 +32,74 @@ void LineFollower::start()
 
     while (is_running && !shutdown_flag)
     {
-        cv::Mat frame = cameraFeed.GetFrame();
-        if (frame.empty())
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            continue;
-        }
-        cv::flip(frame, frame, 0);
+        long current_frame_id = cameraFeed.GetFrameId();
 
-        std::vector<double> inputs;
-        double error_near = 0.0, error_far = 0.0; // Initialize errors
-        bool line_found = ProcessFrameAndGetInputs(frame, inputs, error_near, error_far);
-
-        switch (currentState)
+        if (current_frame_id > last_process_frame_id)
         {
-        case FOLLOWING: // If the line is found, update and train the neural network
-            if (line_found)
+            last_process_frame_id = current_frame_id;
+            cv::Mat frame = cameraFeed.GetFrame();
+
+            if (frame.empty())
             {
-                UpdateAndTrain(inputs, error_near, error_far);
-                if (std::abs(error_near) > 0.1)
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                continue;
+            }
+            cv::flip(frame, frame, 0);
+
+            std::vector<double> inputs;
+            double error_near = 0.0, error_far = 0.0; // Initialize errors
+            bool line_found = ProcessFrameAndGetInputs(frame, inputs, error_near, error_far);
+
+            switch (currentState)
+            {
+            case FOLLOWING: // If the line is found, update and train the neural network
+                if (line_found)
                 {
-                    last_known_error = error_near;
-                }
-            }
-            else
-            {
-                currentState = SEARCHING_TURN;
-                std::cout << "Line lost!" << std::endl;
-                heading_error_integral = 0.0;
-                deltabot.Stop();
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            }
-            break;
-        case SEARCHING_TURN: // If the line is not found, turn the robot to search for the line
-            if (line_found)
-            {
-                currentState = FOLLOWING;
-                std::cout << "Line re-found!" << std::endl;
-                last_error = 0.0;
-                heading_error_integral = 0.0;
-            }
-            else
-            {
-                float turn_speed = 3.0f;
-                if (last_known_error > 0)
-                {
-                    deltabot.SetMotorSpeed(turn_speed, -turn_speed); // Turn right
+                    UpdateAndTrain(inputs, error_near, error_far);
+                    if (std::abs(error_near) > 0.1)
+                    {
+                        last_known_error = error_near;
+                    }
                 }
                 else
                 {
-                    deltabot.SetMotorSpeed(-turn_speed, turn_speed); // Turn left
+                    currentState = SEARCHING_TURN;
+                    std::cout << "Line lost!" << std::endl;
+                    heading_error_integral = 0.0;
+                    deltabot.Stop();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 }
+                break;
+            case SEARCHING_TURN: // If the line is not found, turn the robot to search for the line
+                if (line_found)
+                {
+                    currentState = FOLLOWING;
+                    std::cout << "Line re-found!" << std::endl;
+                    last_error = 0.0;
+                    heading_error_integral = 0.0;
+                }
+                else
+                {
+                    float turn_speed = 3.0f;
+                    if (last_known_error > 0)
+                    {
+                        deltabot.SetMotorSpeed(turn_speed, -turn_speed); // Turn right
+                    }
+                    else
+                    {
+                        deltabot.SetMotorSpeed(-turn_speed, turn_speed); // Turn left
+                    }
+                }
+                break;
             }
-            break;
+
+            fpsTracker.tick();
+            std::string fps_text = fpsTracker.getFPSText();
+            cv::putText(frame, fps_text, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
+
+            cv::imshow("Camera Feed", frame);
         }
 
-        fpsTracker.tick();
-        std::string fps_text = fpsTracker.getFPSText();
-        cv::putText(frame, fps_text, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
-
-        cv::imshow("Camera Feed", frame);
         if (cv::waitKey(1) == 27)
         {
             stop();
