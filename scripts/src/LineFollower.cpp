@@ -147,10 +147,12 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
         error_near = 0.0; // If no line is found in the near segment, set error to 0
     }
 
+    bool line_found_far = false;
     if (m_far.m00 > 100) // Check if the far segment has enough mass
     {
         double cx = m_far.m10 / m_far.m00;
         error_far = (cx - roi_far.cols / 2.0) / (roi_far.cols / 2.0); // Calculate error based on the center of mass
+        line_found_far = true;
     }
     else
     {
@@ -169,7 +171,7 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     cv::rectangle(frame, roi_near_rect, cv::Scalar(0, 255, 0), 2);
     cv::rectangle(frame, roi_far_rect, cv::Scalar(0, 0, 255), 2);
 
-    return line_found_near;
+    return line_found_near || line_found_far;
 }
 
 void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double error_near, double error_far)
