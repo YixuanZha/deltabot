@@ -49,7 +49,7 @@ void LineFollower::start()
             {
                 currentState = SEARCHING_TURN;
                 std::cout << "Line lost!" << std::endl;
-                heading_error_integral = 0.0;
+                // heading_error_integral = 0.0;
                 deltabot.Stop();
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
@@ -60,7 +60,7 @@ void LineFollower::start()
                 currentState = FOLLOWING;
                 std::cout << "Line re-found!" << std::endl;
                 last_error = 0.0;
-                heading_error_integral = 0.0;
+                // heading_error_integral = 0.0;
             }
             else
             {
