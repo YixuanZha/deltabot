@@ -104,7 +104,7 @@ private:
     float proportional_gain = 1.5f; // Proportional gain for the controller
     float derivative_gain = 0.2f;   // Derivative gain for the controller
     float heading_gain = 2.0f;      // Heading gain for the controller
-    float integral_gain = 0.04f;
+    float integral_gain = 0.03f;
 };
 
 #endif
