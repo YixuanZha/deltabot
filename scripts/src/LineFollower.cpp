@@ -140,7 +140,7 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
 
     cv::Scalar lower_black = cv::Scalar(0, 0, 0);
-    cv::Scalar upper_black = cv::Scalar(180, 255, 25); 
+    cv::Scalar upper_black = cv::Scalar(180, 255, 20); 
 
     cv::inRange(hsv, lower_black, upper_black, binary);
 
