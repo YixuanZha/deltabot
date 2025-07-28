@@ -130,19 +130,15 @@ void LineFollower::stop()
 
 bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs, double &error_near, double &error_far)
 {
-    // cv::Mat gray, binary;
-    // cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    // // cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV);
-
-    // cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, 15, 4);
-
     cv::Mat hsv, binary;
     cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
 
     cv::Scalar lower_black = cv::Scalar(0, 0, 0);
-    cv::Scalar upper_black = cv::Scalar(180, 255, 30); 
+    cv::Scalar upper_black = cv::Scalar(180, 255, 25);
 
     cv::inRange(hsv, lower_black, upper_black, binary);
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+    cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, kernel);
 
     cv::imshow("Binary Image", binary);
 
