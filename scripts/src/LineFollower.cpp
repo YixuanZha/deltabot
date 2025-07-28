@@ -97,7 +97,7 @@ void LineFollower::start()
             std::string fps_text = fpsTracker.getFPSText();
             cv::putText(frame, fps_text, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
 
-            cv::imshow("Camera Feed", frame);
+            // cv::imshow("Camera Feed", frame);
         }
 
         if (cv::waitKey(1) == 27)
@@ -130,11 +130,21 @@ void LineFollower::stop()
 
 bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs, double &error_near, double &error_far)
 {
-    cv::Mat gray, binary;
-    cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    // cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV);
+    // cv::Mat gray, binary;
+    // cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    // // cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV);
 
-    cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, 15, 4);
+    // cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, 15, 4);
+
+    cv::Mat hsv, binary;
+    cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
+
+    cv::Scalar lower_black = cv::Scalar(0, 0, 0);
+    cv::Scalar upper_black = cv::Scalar(180, 255, 65); 
+
+    cv::inRange(hsv, lower_black, upper_black, binary);
+
+    cv::imshow("Binary Image", binary);
 
     cv::Rect roi_near_rect(0, frame.rows * 3 / 4, frame.cols, frame.rows / 4); // Near segment at the bottom
     cv::Rect roi_far_rect(0, frame.rows * 2 / 4, frame.cols, frame.rows / 4);  // Far segment in the middle
