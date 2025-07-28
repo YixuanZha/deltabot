@@ -132,7 +132,9 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
 {
     cv::Mat gray, binary;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-    cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV);
+    // cv::threshold(gray, binary, binary_threshold, 255, cv::THRESH_BINARY_INV);
+
+    cv::adaptiveThreshold(gray, binary, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, 15, 4);
 
     cv::Rect roi_near_rect(0, frame.rows * 3 / 4, frame.cols, frame.rows / 4); // Near segment at the bottom
     cv::Rect roi_far_rect(0, frame.rows * 2 / 4, frame.cols, frame.rows / 4);  // Far segment in the middle
