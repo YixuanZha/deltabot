@@ -16,6 +16,9 @@
 #include <numeric>
 #include <vector>
 
+#define CL_TARGET_OPENCL_VERSION 300
+#include <CL/cl.h>
+
 #include "Layer.h"
 #include "bpThread.h"
 
@@ -78,5 +81,15 @@ private:
     const double *inputs = nullptr;
     double controlError = 0;
     double echoError = 0;
+
+    // OpenCL member variable
+    cl_platform_id platform_id;
+    cl_device_id device_id;
+    cl_context context;
+    cl_command_queue command_queue;
+    cl_program program;
+
+    void initCL();
+    void buildKernels();
 
 };
