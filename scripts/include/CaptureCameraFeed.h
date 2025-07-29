@@ -70,7 +70,7 @@ private:
     cv::VideoCapture cap_;
 
     std::atomic<bool> is_running; // Flag to control the running state of the camera feed capture
-    std::atomic<long> frame_id;
+    std::atomic<long> frame_id; // Frame ID to keep track of the number of frames captured
 
     std::string GetGstreamPipeline(int device_index, int width, int height, int fps);
 

@@ -4,7 +4,7 @@ CameraFPSTracker::CameraFPSTracker() : frame_count(0), current_fps(0.0), start_t
 {
 }
 
-void CameraFPSTracker::tick()
+void CameraFPSTracker::tick() // Update the frame count and calculate FPS
 {
     frame_count++;
     auto end_time = std::chrono::steady_clock::now();
@@ -18,7 +18,7 @@ void CameraFPSTracker::tick()
     }
 }
 
-std::string CameraFPSTracker::getFPSText() const
+std::string CameraFPSTracker::getFPSText() const // Get the current FPS value as a formatted string
 {
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2) << current_fps;
