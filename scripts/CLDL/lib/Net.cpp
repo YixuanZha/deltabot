@@ -128,7 +128,7 @@ void Net::buildKernels()
         clGetProgramBuildInfo(this->program,this->device_id,CL_PROGRAM_BUILD_LOG,0,NULL,&log_size);
         std::vector<char> log(log_size);
         clGetProgramBuildInfo(this->program, this->device_id, CL_PROGRAM_BUILD_LOG, log_size, log.data(), NULL);
-        std::cerr << "Kernel build error" << log.data() << std::endl;
+        std::cerr << log.data() << std::endl;
         exit(1);
     }
 }
