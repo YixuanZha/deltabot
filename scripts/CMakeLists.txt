@@ -26,6 +26,14 @@ set(CLDL_SOURCES
     CLDL/lib/Neuron.cpp
 )
 
+set(KERNEL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/CLDL/lib/cldl_kernels.cl)
+
+if(NOT EXISTS ${KERNEL_FILE})
+    message(FATAL_ERROR "Kernel file not found at ${KERNEL_FILE}")
+endif()
+
+file(COPY ${KERNEL_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 add_executable(TestServoMotor 
     Tests/TestServoMotor.cpp
     ${COMMON_SOURCES}
