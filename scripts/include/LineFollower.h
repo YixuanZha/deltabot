@@ -25,9 +25,14 @@ enum RobotState
 class LineFollower
 {
 public:
-    static std::atomic<bool> shutdown_flag;
-
-    static void signalHandler(int siganl);
+    static std::atomic<bool> shutdown_flag; // Flag to indicate if the line follower should stop
+    /**
+     * @brief Signal handler for graceful shutdown
+     * @param signal : The signal received for shutdown
+     * @note This function sets the shutdown_flag to true, which will stop the line following
+     * and learning process when the signal is received (e.g., Ctrl+C).
+     */
+    static void signalHandler(int signal);
     /**
      * @brief Constructor for LineFollower
      * @param bot : Reference to the DeltaBot instance for controlling the robot
@@ -52,10 +57,7 @@ private:
      * @param inputs : Vector to store the processed inputs for the neural network
      * @param error_near : Reference to store the error calculated from the near segment
      * @param error_far : Reference to store the error calculated from the far segment
-     * @return true if the line is found, false otherwise
-     * @note The function processes the frame to create a binary image, extracts regions of interest
-     * for near and far segments, calculates the moments to find the center of the line,
-     * and computes the errors based on the center positions.
+     * @return true if a line is found, false otherwise
      */
     bool ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs, double &error_near, double &error_far);
 
@@ -69,7 +71,7 @@ private:
      */
     void UpdateAndTrain(const std::vector<double> &inputs, double error_near, double error_far);
 
-    // Reference to the DeltaBot and CaptureCameraFeed instances
+    // Member variables
     DeltaBot &deltabot;
     CaptureCameraFeed &cameraFeed;
     CameraFPSTracker fpsTracker;
@@ -77,7 +79,7 @@ private:
     RobotState currentState = FOLLOWING; // Initial state is following the line
     double last_known_error = 0.0;       // Last known error for line following
 
-    long last_process_frame_id = -1;
+    long last_process_frame_id = -1; // Last processed frame ID to avoid reprocessing the same frame
 
     std::atomic<bool> is_running; // Flag to control the running state of the line follower
 
@@ -104,7 +106,7 @@ private:
     float proportional_gain = 2.0f; // Proportional gain for the controller
     float derivative_gain = 0.2f;   // Derivative gain for the controller
     float heading_gain = 2.5f;      // Heading gain for the controller
-    float integral_gain = 0.05f;
+    float integral_gain = 0.05f;    // Integral gain for the controller
 };
 
 #endif

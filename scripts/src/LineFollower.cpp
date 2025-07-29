@@ -133,12 +133,12 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     cv::Mat hsv, binary;
     cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
 
-    cv::Scalar lower_black = cv::Scalar(0, 0, 0);
-    cv::Scalar upper_black = cv::Scalar(180, 255, 100);
+    cv::Scalar lower_black = cv::Scalar(0, 0, 0); // Define the range for black color in HSV space
+    cv::Scalar upper_black = cv::Scalar(180, 255, 100); // Define the range for black color in HSV space
 
-    cv::inRange(hsv, lower_black, upper_black, binary);
-    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
-    cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, kernel);
+    cv::inRange(hsv, lower_black, upper_black, binary); // Create a binary image where black pixels are set to 255 and others to 0
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)); // Create a rectangular kernel for morphological operations
+    cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, kernel); // Apply closing operation to fill small holes in the binary image
 
     cv::imshow("Binary Image", binary);
 
@@ -204,10 +204,10 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
     double heading_error = error_far - error_near; // Calculate the heading error based on the near and far segment errors
     float h_term = heading_error * heading_gain;   // Heading term for the controller
 
-    heading_error_integral += heading_error;
-    double integral_limit = 20.0;
-    heading_error_integral = std::max(-integral_limit, std::min(integral_limit, heading_error_integral));
-    float i_term = heading_error_integral * integral_gain;
+    heading_error_integral += heading_error; // Update the integral of the heading error
+    double integral_limit = 20.0; // Limit for the integral term to prevent windup
+    heading_error_integral = std::max(-integral_limit, std::min(integral_limit, heading_error_integral)); // Clamp the integral term
+    float i_term = heading_error_integral * integral_gain; // Integral term for the controller
 
     float total_steering_adjustment = p_term + h_term + d_term + i_term; // Total steering adjustment based on the controller
 
@@ -220,12 +220,12 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed)); // Clamp the speed values to a range of -10 to 10
     deltabot.SetMotorSpeed(left_speed, right_speed);              // Set the motor speeds based on the calculated adjustments
 
-    double network_error = error_near - nn_steering_output;
+    double network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
     double amplified_error = network_error * error_gain;
 
     int lastLayerIndex = neuralNet->getnLayers() - 1;
     std::vector<int> injection_layers = {lastLayerIndex, 0};
-    neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false);
+    neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false); // Perform backpropagation to update the weights based on the error
     neuralNet->updateWeights();
 
     std::cout << "Err(Near/Far): " << std::fixed << std::setprecision(2) << error_near << "/" << error_far
