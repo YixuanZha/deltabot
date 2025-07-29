@@ -8,6 +8,7 @@ find_package(OpenCV REQUIRED)
 message(STATUS "DEBUG: OpenCV Include Dirs are: ${OpenCV_INCLUDE_DIRS}")
 
 find_package(Threads REQUIRED)
+find_package(OpenCL REQUIRED) 
 
 set(COMMON_SOURCES
     src/Pwm.cpp
@@ -54,10 +55,12 @@ foreach(target TestServoMotor TestSpeedChange TestBotMotion TestLineFollowing)
         ${OpenCV_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/CLDL/include/cldl
+        {OpenCL_INCLUDE_DIRS}
     )
     target_link_libraries(${target} PRIVATE 
         ${OpenCV_LIBS}
         Threads::Threads
+        OpenCL::OpenCL
     )
 endforeach()
 
