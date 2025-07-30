@@ -41,7 +41,6 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
         int numNeurons = *nNeuronsp;
 
         layers[i] = new Layer(numNeurons, nInputForLayer);
-
         cl_int err;
         size_t weights_size = sizeof(float) * numNeurons * nInputForLayer;
         size_t biases_size = sizeof(float) * numNeurons;
