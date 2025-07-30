@@ -20,6 +20,8 @@ public:
     ~Layer();
 
     friend class Net;
+    int getnNeurons() { return nNeurons; }
+    int getnInputs() { return nInputs; }
 
     void initLayer(int _layerIndex, Neuron::weightInitMethod _wim, Neuron::biasInitMethod _bim, Neuron::actMethod _am);
     void setLearningRate(float _learningRate);
@@ -34,7 +36,7 @@ public:
                                                  Neuron::errorMethod _errorMethod);
     void updateWeights();
     Neuron *getNeuron(int _neuronIndex);
-    int getnNeurons();
+    // int getnNeurons();
     float getOutput(int _neuronIndex);
     float getSumOutput(int _neuronIndex);
     float getWeights(int _neuronIndex, int _weightIndex);

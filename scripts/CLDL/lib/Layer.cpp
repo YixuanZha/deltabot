@@ -176,9 +176,9 @@ float Layer::getOutput(int _neuronIndex){
     return (neurons[_neuronIndex]->getOutput());
 }
 
-int Layer::getnNeurons(){
-    return (nNeurons);
-}
+// int Layer::getnNeurons(){
+//     return (nNeurons);
+// }
 
 //*************************************************************************************
 //saving and inspecting
