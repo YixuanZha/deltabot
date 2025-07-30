@@ -178,11 +178,12 @@ void Net::initNetwork(Neuron::weightInitMethod _wim,
 
 void Net::setLearningRate(float _learningRate)
 {
-    learningRate = _learningRate;
-    for (int i = 0; i < nLayers; i++)
-    {
-        layers[i]->setLearningRate(learningRate);
-    }
+    // learningRate = _learningRate;
+    // for (int i = 0; i < nLayers; i++)
+    // {
+    //     layers[i]->setLearningRate(learningRate);
+    // }
+    this->learningRate = _learningRate;
 }
 
 //*************************************************************************************
