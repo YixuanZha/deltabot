@@ -461,7 +461,7 @@ void Net::updateWeights()
         err = clSetKernelArg(update_weights_kernel, 5, sizeof(int), &current_layer->nInputs);
         err = clSetKernelArg(update_weights_kernel, 6, sizeof(int), &current_layer->nNeurons);
 
-        size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(), (size_t)current_layer->getnNeurons()};
+        size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(), (size_t)current_layer->getnInputs()};
 
         err = clEnqueueNDRangeKernel(command_queue, update_weights_kernel, 2, NULL, global_work_size, NULL, 0, NULL, NULL);
 
