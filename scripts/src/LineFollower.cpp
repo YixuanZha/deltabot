@@ -18,7 +18,7 @@ LineFollower::LineFollower(DeltaBot &bot, CaptureCameraFeed &camera)
     // 2 layers(1 hidden layer + 1 output layer)
     neuralNet = std::make_unique<Net>(layer, neuronsPerLayer, input_neurons, output_layer);
     // Initialise network weights and activation functions
-    neuralNet->initNetwork(Neuron::W_RANDOM, Neuron::B_RANDOM, Neuron::Act_Tanh);
+    // neuralNet->initNetwork(Neuron::W_RANDOM, Neuron::B_RANDOM, Neuron::Act_Tanh);
     // set learning rate
     neuralNet->setLearningRate(learning_rate);
     std::cout << "Neural network initialisation complete!" << std::endl;
@@ -220,13 +220,23 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed)); // Clamp the speed values to a range of -10 to 10
     deltabot.SetMotorSpeed(left_speed, right_speed);              // Set the motor speeds based on the calculated adjustments
 
-    double network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
-    double amplified_error = network_error * error_gain;
+    // double network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
+    // double amplified_error = network_error * error_gain;
 
-    int lastLayerIndex = neuralNet->getnLayers() - 1;
-    std::vector<int> injection_layers = {lastLayerIndex, 0};
-    neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false); // Perform backpropagation to update the weights based on the error
+    // int lastLayerIndex = neuralNet->getnLayers() - 1;
+    // std::vector<int> injection_layers = {lastLayerIndex, 0};
+    // neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false); // Perform backpropagation to update the weights based on the error
+    // neuralNet->updateWeights();
+
+    double target_output[1] = {error_near};
+
+    cl_int err;
+    cl_mem target_buffer = clCreateBuffer(neuralNet->context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(double)* 1,target_output,&err);
+    
+    neuralNet->customBackProp(target_buffer);
     neuralNet->updateWeights();
+
+    clReleaseMemObject(target_buffer);
 
     std::cout << "Err(Near/Far): " << std::fixed << std::setprecision(2) << error_near << "/" << error_far
               << "| HeadingErr: " << heading_error
