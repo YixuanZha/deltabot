@@ -35,6 +35,7 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
     // cout << "nInputs: " << nInputs << endl;
     int nInput = 0; // temporary variable to use within the scope of for loop
 
+    std::cout << "Initializing OpenCL environment" << std::endl;
     initCL();
 
     for (int i = 0; i < nLayers; i++)
@@ -55,14 +56,11 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
         nNeuronsp++; // point to the no. of neurons in the next layer
     }
     nOutputs = layers[nLayers - 1]->getnNeurons();
-
-    std::cout << "Initializing OpenCL environment" << std::endl;
-    initCL();
-    buildKernels();
-    std::cout << "OpenCl envirnment ready" << std::endl; for (int i = 0; i < nLayers; i++)
+    for (int i = 0; i < nLayers; i++)
     {
         int numNeurons = *nNeuronsp;
-        if (i == 0) {
+        if (i == 0)
+        {
             nInput = nInputs;
         }
 
@@ -70,12 +68,14 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
 
         cl_int err;
         size_t weights_size = sizeof(float) * numNeurons * nInput;
-        size_t biases_size = sizeof(float) * numNeurons;      
+        size_t biases_size = sizeof(float) * numNeurons;
 
         std::vector<float> temp_weights(numNeurons * nInput);
         std::vector<float> temp_biases(numNeurons);
-        for(size_t j = 0; j < temp_weights.size(); ++j) temp_weights[j] = ((float) rand() / (RAND_MAX));
-        for(size_t j = 0; j < temp_biases.size(); ++j) temp_biases[j] = ((float) rand() / (RAND_MAX));
+        for (size_t j = 0; j < temp_weights.size(); ++j)
+            temp_weights[j] = ((float)rand() / (RAND_MAX));
+        for (size_t j = 0; j < temp_biases.size(); ++j)
+            temp_biases[j] = ((float)rand() / (RAND_MAX));
 
         layers[i]->weights_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, weights_size, temp_weights.data(), &err);
         checkError(err, "Weights buffer creation");
@@ -468,22 +468,22 @@ void Net::updateWeights()
 
     cl_int err;
     cl_mem current_input_buffer = this->net_input_buffer;
-    
-    for(int i = 0; i < nLayers; i++)
+
+    for (int i = 0; i < nLayers; i++)
     {
-        Layer* current_layer = layers[i];
+        Layer *current_layer = layers[i];
 
-        err = clSetKernelArg(update_weights_kernel,0,sizeof(cl_mem),&current_layer->internal_errors_buffer);
-        err = clSetKernelArg(update_weights_kernel,1,sizeof(cl_mem),&current_input_buffer);
-        err = clSetKernelArg(update_weights_kernel,2,sizeof(cl_mem),&current_layer->weights_buffer);
-        err = clSetKernelArg(update_weights_kernel,3,sizeof(cl_mem),&current_layer->biases_buffer);
-        err = clSetKernelArg(update_weights_kernel,4,sizeof(cl_mem),&learningRate);
-        err = clSetKernelArg(update_weights_kernel,5,sizeof(cl_mem),&current_layer->nInputs);
-        err = clSetKernelArg(update_weights_kernel,6,sizeof(cl_mem),&current_layer->nNeurons);
+        err = clSetKernelArg(update_weights_kernel, 0, sizeof(cl_mem), &current_layer->internal_errors_buffer);
+        err = clSetKernelArg(update_weights_kernel, 1, sizeof(cl_mem), &current_input_buffer);
+        err = clSetKernelArg(update_weights_kernel, 2, sizeof(cl_mem), &current_layer->weights_buffer);
+        err = clSetKernelArg(update_weights_kernel, 3, sizeof(cl_mem), &current_layer->biases_buffer);
+        err = clSetKernelArg(update_weights_kernel, 4, sizeof(cl_mem), &learningRate);
+        err = clSetKernelArg(update_weights_kernel, 5, sizeof(cl_mem), &current_layer->nInputs);
+        err = clSetKernelArg(update_weights_kernel, 6, sizeof(cl_mem), &current_layer->nNeurons);
 
-        size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(),(size_t)current_layer->getnNeurons()};
+        size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(), (size_t)current_layer->getnNeurons()};
 
-        err = clEnqueueNDRangeKernel(command_queue,update_weights_kernel,2,NULL,global_work_size,NULL,0,NULL,NULL);
+        err = clEnqueueNDRangeKernel(command_queue, update_weights_kernel, 2, NULL, global_work_size, NULL, 0, NULL, NULL);
 
         current_input_buffer = current_layer->activated_outputs_buffer;
     }
@@ -496,9 +496,9 @@ void Net::updateWeights()
 float Net::getOutput(int _neuronIndex)
 {
     // return (layers[nLayers - 1]->getOutput(_neuronIndex));
-    Layer* last_layer = layers[nLayers - 1];
+    Layer *last_layer = layers[nLayers - 1];
 
-    if(_neuronIndex < 0 || _neuronIndex >= last_layer->getnNeurons())
+    if (_neuronIndex < 0 || _neuronIndex >= last_layer->getnNeurons())
     {
         std::cerr << "ERROR: Neuron index out of bounds in gerOutput" << std::endl;
         return 0.0;
@@ -506,7 +506,7 @@ float Net::getOutput(int _neuronIndex)
 
     std::vector<float> host_output(last_layer->getnNeurons());
 
-    cl_int err = clEnqueueReadBuffer(command_queue,last_layer->activated_outputs_buffer,CL_TRUE,0,sizeof(float)* last_layer->getnNeurons(),host_output.data(),0,NULL,NULL);
+    cl_int err = clEnqueueReadBuffer(command_queue, last_layer->activated_outputs_buffer, CL_TRUE, 0, sizeof(float) * last_layer->getnNeurons(), host_output.data(), 0, NULL, NULL);
     checkError(err, "Read final output buffer in getOutput");
 
     return host_output[_neuronIndex];
