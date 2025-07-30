@@ -31,12 +31,17 @@
  *
  * GNU GENERAL PUBLIC LICENSE
  **/
-class Net {
+class Net
+{
 
 public:
     Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors);
     ~Net();
-    enum propagationDirection {BACKWARD = 0 , FORWARD = 1};
+    enum propagationDirection
+    {
+        BACKWARD = 0,
+        FORWARD = 1
+    };
     void initNetwork(Neuron::weightInitMethod _wim, Neuron::biasInitMethod _bim, Neuron::actMethod _am);
     void setLearningRate(double _learningRate);
     void setInputs(const double *_inputs);
@@ -46,10 +51,11 @@ public:
                          double _controlError, Neuron::errorMethod _errorMethod, bool _doThread);
     void customBackProp(std::vector<int> &startLayerIndex,
                         int internalErrorIndex, double _controlError,
-                        Neuron::errorMethod _errorMethod,  bool _doThread);
+                        Neuron::errorMethod _errorMethod, bool _doThread);
     void customBackProp(std::vector<int> &startLayerIndex,
                         int internalErrorIndex, double _controlError,
                         Neuron::errorMethod _errorMethod);
+    void customBackProp(cl_mem target_outputs_buffer);
     void customForwardProp(std::vector<int> &injectionLayerIndex,
                            int _internalErrorIndex, double _controlError,
                            Neuron::errorMethod _errorMethod);
@@ -69,6 +75,9 @@ public:
     void snapWeights();
     void printNetwork();
 
+    cl_context context;
+    cl_command_queue command_queue;
+
 private:
     int nLayers = 0;
     int nNeurons = 0;
@@ -85,11 +94,16 @@ private:
     // OpenCL member variable
     cl_platform_id platform_id;
     cl_device_id device_id;
-    cl_context context;
-    cl_command_queue command_queue;
+
     cl_program program;
+
+    cl_kernel forward_prop_kernel;
+    cl_kernel backprop_error_kernel;
+    cl_kernel update_weights_kernel;
+    cl_kernel calculate_output_error_kernel;
+
+    cl_mem net_input_buffer;
 
     void initCL();
     void buildKernels();
-
 };
