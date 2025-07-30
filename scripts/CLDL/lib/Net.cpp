@@ -68,6 +68,12 @@ Net::~Net()
     delete[] layers;
 
     std::cout << "Releasing OpenCL resources...." << std::endl;
+
+    clReleaseMemObject(net_input_buffer);
+    clReleaseKernel(forward_prop_kernel);
+    clReleaseKernel(backprop_error_kernel);
+    clReleaseKernel(update_weights_kernel);
+    clReleaseKernel(calculate_output_error_kernel);
     clReleaseProgram(program);
     clReleaseCommandQueue(command_queue);
     clReleaseContext(context);
@@ -110,27 +116,36 @@ void Net::buildKernels()
     cl_int err;
 
     std::ifstream kernel_file("cldl_kernels.cl"); // read kernel file (cldl_kernel.cl)
-    if(!kernel_file.is_open())
+    if (!kernel_file.is_open())
     {
         std::cerr << "Could not open the kernel file 'cldl_kernels.cl'" << std::endl;
         exit(1);
     }
     std::string source_str(std::istreambuf_iterator<char>(kernel_file), (std::istreambuf_iterator<char>()));
-    const char* source = source_str.c_str();
+    const char *source = source_str.c_str();
 
-    this->program = clCreateProgramWithSource(this->context,1,&source,NULL,&err);
-    checkError(err,"Net::buildKernels - Program creation");
-    
-    err = clBuildProgram(this->program,1,&this->device_id,NULL,NULL,NULL);
-    if(err != CL_SUCCESS)
+    this->program = clCreateProgramWithSource(this->context, 1, &source, NULL, &err);
+    checkError(err, "Net::buildKernels - Program creation");
+
+    err = clBuildProgram(this->program, 1, &this->device_id, NULL, NULL, NULL);
+    if (err != CL_SUCCESS)
     {
         size_t log_size;
-        clGetProgramBuildInfo(this->program,this->device_id,CL_PROGRAM_BUILD_LOG,0,NULL,&log_size);
+        clGetProgramBuildInfo(this->program, this->device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
         std::vector<char> log(log_size);
         clGetProgramBuildInfo(this->program, this->device_id, CL_PROGRAM_BUILD_LOG, log_size, log.data(), NULL);
         std::cerr << log.data() << std::endl;
         exit(1);
     }
+
+    this->forward_prop_kernel = clCreateKernel(this->program, "forward_prop_kernel", &err);
+    checkError(err, "Kernel creation: forward_prop_kernel");
+    this->backprop_error_kernel = clCreateKernel(this->program, "backprop_error_kernel", &err);
+    checkError(err, "Kernel creation: backprop_error_kernel");
+    this->update_weights_kernel = clCreateKernel(this->program, "update_weights_kernel", &err);
+    checkError(err, "Kernel creation: update_weights_kernel");
+    this->calculate_output_error_kernel = clCreateKernel(this->program, "calculate_output_error_kernel", &err);
+    checkError(err, "Kernel creation: calculate_output_error_kernel");
 }
 
 void Net::initNetwork(Neuron::weightInitMethod _wim,
@@ -157,25 +172,55 @@ void Net::setLearningRate(double _learningRate)
 
 void Net::setInputs(const double *_inputs)
 {
-    inputs = _inputs;
-    layers[0]->setInputs(inputs); // sets the inputs to the first layer only
+    // inputs = _inputs;
+    // layers[0]->setInputs(inputs); // sets the inputs to the first layer only
+    cl_int err;
+    if (!net_input_buffer)
+    {
+        net_input_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(double) * nInputs, NULL, &err);
+        checkError(err, "Net input buffer creation");
+    }
+
+    err = clEnqueueWriteBuffer(command_queue, net_input_buffer, CL_TRUE, 0, sizeof(double) * nInputs, _inputs, 0, NULL, NULL);
+    checkError(err, "Write to net input buffer");
 }
 
 void Net::propInputs()
 {
-    for (int i = 0; i < nLayers - 1; i++)
-    {
-        layers[i]->calcOutputs();
-        for (int j = 0; j < layers[i]->getnNeurons(); j++)
-        {
-            double inputOuput = layers[i]->getOutput(j);
-            layers[i + 1]->propInputs(j, inputOuput);
-        }
-    }
-    layers[nLayers - 1]->calcOutputs();
+    // for (int i = 0; i < nLayers - 1; i++)
+    // {
+    //     layers[i]->calcOutputs();
+    //     for (int j = 0; j < layers[i]->getnNeurons(); j++)
+    //     {
+    //         double inputOuput = layers[i]->getOutput(j);
+    //         layers[i + 1]->propInputs(j, inputOuput);
+    //     }
+    // }
+    // layers[nLayers - 1]->calcOutputs();
     /* this calculates the final output of the network,
      * i.e. the output of the final layer
      * but this is not fed into any further layer*/
+    cl_int err;
+    cl_mem current_input_buffer = this->net_input_buffer;
+
+    for (int i = 0; i < nLayers; i++)
+    {
+        Layer *current_layer = layers[i];
+
+        err = clSetKernelArg(forward_prop_kernel, 0, sizeof(cl_mem), &current_input_buffer);
+        err |= clSetKernelArg(forward_prop_kernel, 1, sizeof(cl_mem), &current_layer->weights_buffer);
+        err |= clSetKernelArg(forward_prop_kernel, 2, sizeof(cl_mem), &current_layer->biases_buffer);
+        err |= clSetKernelArg(forward_prop_kernel, 3, sizeof(cl_mem), &current_layer->sum_outputs_buffer);
+        err |= clSetKernelArg(forward_prop_kernel, 4, sizeof(cl_mem), &current_layer->activated_outputs_buffer);
+        err |= clSetKernelArg(forward_prop_kernel, 5, sizeof(int), &current_layer->nInputs);
+
+        size_t global_work_size = current_layer->getnNeurons();
+
+        err = clEnqueueNDRangeKernel(command_queue, forward_prop_kernel, 1, NULL, &global_work_size, NULL, 0, NULL, NULL);
+
+        current_input_buffer = current_layer->activated_outputs_buffer;
+    }
+    clFinish(command_queue);
 }
 
 void Net::masterPropagate(std::vector<int> &injectionLayerIndex,
@@ -338,12 +383,72 @@ void Net::customBackProp(std::vector<int> &injectionLayerIndex,
     }
 }
 
+void Net::customBackProp(cl_mem target_outputs_buffer)
+{
+    cl_int err;
+
+    // Calculate the error of output layer
+    Layer *last_layer = layers[nLayers - 1];
+
+    // Set kernel parameter for the calculation
+    err = clSetKernelArg(calculate_output_error_kernel, 0, sizeof(cl_mem), &last_layer->activated_outputs_buffer);
+    err |= clSetKernelArg(calculate_output_error_kernel, 1, sizeof(cl_mem), &target_outputs_buffer);
+    err |= clSetKernelArg(calculate_output_error_kernel, 2, sizeof(cl_mem), &last_layer->sum_outputs_buffer);
+    err |= clSetKernelArg(calculate_output_error_kernel, 3, sizeof(cl_mem), &last_layer->internal_errors_buffer);
+
+    // execute the kernel
+    size_t global_work_size = last_layer->getnNeurons();
+    err = clEnqueueNDRangeKernel(command_queue, calculate_output_error_kernel, 1, NULL, &global_work_size, NULL, 0, NULL, NULL);
+    checkError(err, "Enqueue calculate_output_error_kernel");
+
+    for (int i = nLayers - 2; i >= 0; i--)
+    {
+        Layer *current_layer = layers[i];
+        Layer *next_layer = layers[i + 1];
+
+        err = clSetKernelArg(backprop_error_kernel, 0, sizeof(cl_mem), &next_layer->internal_errors_buffer);
+        err |= clSetKernelArg(backprop_error_kernel, 1, sizeof(cl_mem), &next_layer->weights_buffer);
+        err |= clSetKernelArg(backprop_error_kernel, 2, sizeof(cl_mem), &current_layer->sum_outputs_buffer);
+        err |= clSetKernelArg(backprop_error_kernel, 3, sizeof(cl_mem), &current_layer->internal_errors_buffer);
+        err |= clSetKernelArg(backprop_error_kernel, 4, sizeof(cl_mem), &next_layer->nNeurons);
+        err |= clSetKernelArg(backprop_error_kernel, 5, sizeof(cl_mem), &current_layer->nNeurons);
+
+        // execute the kernel
+        global_work_size = current_layer->getnNeurons();
+        err = clEnqueueNDRangeKernel(command_queue, backprop_error_kernel, 1, NULL, &global_work_size, NULL, 0, NULL, NULL);
+    }
+    clFinish(command_queue);
+}
+
 void Net::updateWeights()
 {
-    for (int i = nLayers - 1; i >= 0; i--)
+    // for (int i = nLayers - 1; i >= 0; i--)
+    // {
+    //     layers[i]->updateWeights();
+    // }
+
+    cl_int err;
+    cl_mem current_input_buffer = this->net_input_buffer;
+    
+    for(int i = 0; i < nLayers; i++)
     {
-        layers[i]->updateWeights();
+        Layer* current_layer = layers[i];
+
+        err = clSetKernelArg(update_weights_kernel,0,sizeof(cl_mem),&current_layer->internal_errors_buffer);
+        err = clSetKernelArg(update_weights_kernel,1,sizeof(cl_mem),&current_input_buffer);
+        err = clSetKernelArg(update_weights_kernel,2,sizeof(cl_mem),&current_layer->weights_buffer);
+        err = clSetKernelArg(update_weights_kernel,3,sizeof(cl_mem),&current_layer->biases_buffer);
+        err = clSetKernelArg(update_weights_kernel,4,sizeof(cl_mem),&learningRate);
+        err = clSetKernelArg(update_weights_kernel,5,sizeof(cl_mem),&current_layer->nInputs);
+        err = clSetKernelArg(update_weights_kernel,6,sizeof(cl_mem),&current_layer->nNeurons);
+
+        size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(),(size_t)current_layer->getnNeurons()};
+
+        err = clEnqueueNDRangeKernel(command_queue,update_weights_kernel,2,NULL,global_work_size,NULL,0,NULL,NULL);
+
+        current_input_buffer = current_layer->activated_outputs_buffer;
     }
+    clFinish(command_queue);
 }
 //*************************************************************************************
 // getters:
@@ -351,7 +456,21 @@ void Net::updateWeights()
 
 double Net::getOutput(int _neuronIndex)
 {
-    return (layers[nLayers - 1]->getOutput(_neuronIndex));
+    // return (layers[nLayers - 1]->getOutput(_neuronIndex));
+    Layer* last_layer = layers[nLayers - 1];
+
+    if(_neuronIndex < 0 || _neuronIndex >= last_layer->getnNeurons())
+    {
+        std::cerr << "ERROR: Neuron index out of bounds in gerOutput" << std::endl;
+        return 0.0;
+    }
+
+    std::vector<double> host_output(last_layer->getnNeurons());
+
+    cl_int err = clEnqueueReadBuffer(command_queue,last_layer->activated_outputs_buffer,CL_TRUE,0,sizeof(double)* last_layer->getnNeurons(),host_output.data(),0,NULL,NULL);
+    checkError(err, "Read final output buffer in getOutput");
+
+    return host_output[_neuronIndex];
 }
 
 double Net::getSumOutput(int _neuronIndex)
