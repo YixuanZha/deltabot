@@ -26,51 +26,27 @@ void checkError(cl_int err, const char *operations)
 
 Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
 {
-    cout << "*******************************************************************************************************" << endl;
-    nLayers = _nLayers; // no. of layers including inputs and outputs layers
+    std::cout << "*******************************************************************************************************" << std::endl;
+    nLayers = _nLayers;
     layers = new Layer *[nLayers];
-    nInternalErrors = _nInternalErrors;
-    int *nNeuronsp = _nNeurons; // number of neurons in each layer
-    nInputs = _nInputs;         // the no. of inputs to the network (i.e. the first layer)
-    // cout << "nInputs: " << nInputs << endl;
-    int nInput = 0; // temporary variable to use within the scope of for loop
+    nInputs = _nInputs;
+    int *nNeuronsp = _nNeurons;
+    int nInputForLayer = _nInputs;
 
     std::cout << "Initializing OpenCL environment" << std::endl;
     initCL();
 
     for (int i = 0; i < nLayers; i++)
     {
-        int numNeurons = *nNeuronsp; // no.
-        // neurons in this layer
-        if (i == 0)
-        {
-            nInput = nInputs;
-        }
-        /* no. inputs to the first layer is equal to no. inputs to the network */
-        layers[i] = new Layer(numNeurons, nInput);
-        nNeurons += numNeurons;
-        nWeights += (numNeurons * nInput);
-        nInput = numNeurons;
-        /*no. inputs to the next layer is equal to the number of neurons
-         * in the current layer. */
-        nNeuronsp++; // point to the no. of neurons in the next layer
-    }
-    nOutputs = layers[nLayers - 1]->getnNeurons();
-    for (int i = 0; i < nLayers; i++)
-    {
         int numNeurons = *nNeuronsp;
-        if (i == 0)
-        {
-            nInput = nInputs;
-        }
 
-        layers[i] = new Layer(numNeurons, nInput);
+        layers[i] = new Layer(numNeurons, nInputForLayer);
 
         cl_int err;
-        size_t weights_size = sizeof(float) * numNeurons * nInput;
+        size_t weights_size = sizeof(float) * numNeurons * nInputForLayer;
         size_t biases_size = sizeof(float) * numNeurons;
 
-        std::vector<float> temp_weights(numNeurons * nInput);
+        std::vector<float> temp_weights(numNeurons * nInputForLayer);
         std::vector<float> temp_biases(numNeurons);
         for (size_t j = 0; j < temp_weights.size(); ++j)
             temp_weights[j] = ((float)rand() / (RAND_MAX));
@@ -89,7 +65,7 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
         layers[i]->internal_errors_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, biases_size, NULL, &err);
         checkError(err, "Internal errors buffer creation");
 
-        nInput = numNeurons;
+        nInputForLayer = numNeurons;
         nNeuronsp++;
     }
     nOutputs = layers[nLayers - 1]->getnNeurons();
@@ -100,13 +76,18 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
 
 Net::~Net()
 {
+    std::cout << "Releasing OpenCL resources...." << std::endl;
+
     for (int i = 0; i < nLayers; i++)
     {
+        clReleaseMemObject(layers[i]->weights_buffer);
+        clReleaseMemObject(layers[i]->biases_buffer);
+        clReleaseMemObject(layers[i]->sum_outputs_buffer);
+        clReleaseMemObject(layers[i]->activated_outputs_buffer);
+        clReleaseMemObject(layers[i]->internal_errors_buffer);
         delete layers[i];
     }
     delete[] layers;
-
-    std::cout << "Releasing OpenCL resources...." << std::endl;
 
     clReleaseMemObject(net_input_buffer);
     clReleaseKernel(forward_prop_kernel);
