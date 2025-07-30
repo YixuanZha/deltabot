@@ -34,6 +34,9 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
     nInputs = _nInputs;         // the no. of inputs to the network (i.e. the first layer)
     // cout << "nInputs: " << nInputs << endl;
     int nInput = 0; // temporary variable to use within the scope of for loop
+
+    initCL();
+
     for (int i = 0; i < nLayers; i++)
     {
         int numNeurons = *nNeuronsp; // no.
@@ -43,7 +46,7 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
             nInput = nInputs;
         }
         /* no. inputs to the first layer is equal to no. inputs to the network */
-        layers[i] = new Layer(numNeurons, nInput, nInternalErrors);
+        layers[i] = new Layer(numNeurons, nInput);
         nNeurons += numNeurons;
         nWeights += (numNeurons * nInput);
         nInput = numNeurons;
@@ -55,6 +58,42 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
 
     std::cout << "Initializing OpenCL environment" << std::endl;
     initCL();
+    buildKernels();
+    std::cout << "OpenCl envirnment ready" << std::endl; for (int i = 0; i < nLayers; i++)
+    {
+        int numNeurons = *nNeuronsp;
+        if (i == 0) {
+            nInput = nInputs;
+        }
+
+        layers[i] = new Layer(numNeurons, nInput);
+
+        cl_int err;
+        size_t weights_size = sizeof(float) * numNeurons * nInput;
+        size_t biases_size = sizeof(float) * numNeurons;      
+
+        std::vector<float> temp_weights(numNeurons * nInput);
+        std::vector<float> temp_biases(numNeurons);
+        for(size_t j = 0; j < temp_weights.size(); ++j) temp_weights[j] = ((float) rand() / (RAND_MAX));
+        for(size_t j = 0; j < temp_biases.size(); ++j) temp_biases[j] = ((float) rand() / (RAND_MAX));
+
+        layers[i]->weights_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, weights_size, temp_weights.data(), &err);
+        checkError(err, "Weights buffer creation");
+        layers[i]->biases_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, biases_size, temp_biases.data(), &err);
+        checkError(err, "Biases buffer creation");
+
+        layers[i]->sum_outputs_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, biases_size, NULL, &err);
+        checkError(err, "Sum outputs buffer creation");
+        layers[i]->activated_outputs_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, biases_size, NULL, &err);
+        checkError(err, "Activated outputs buffer creation");
+        layers[i]->internal_errors_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, biases_size, NULL, &err);
+        checkError(err, "Internal errors buffer creation");
+
+        nInput = numNeurons;
+        nNeuronsp++;
+    }
+    nOutputs = layers[nLayers - 1]->getnNeurons();
+
     buildKernels();
     std::cout << "OpenCl envirnment ready" << std::endl;
 }
