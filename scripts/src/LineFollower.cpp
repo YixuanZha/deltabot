@@ -220,15 +220,15 @@ void LineFollower::UpdateAndTrain(const std::vector<float> &inputs, float error_
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed)); // Clamp the speed values to a range of -10 to 10
     deltabot.SetMotorSpeed(left_speed, right_speed);              // Set the motor speeds based on the calculated adjustments
 
-    // float network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
-    // float amplified_error = network_error * error_gain;
+    float network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
+    float amplified_error = network_error * error_gain;
 
     // int lastLayerIndex = neuralNet->getnLayers() - 1;
     // std::vector<int> injection_layers = {lastLayerIndex, 0};
     // neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false); // Perform backpropagation to update the weights based on the error
     // neuralNet->updateWeights();
 
-    float target_output[1] = {error_near};
+    float target_output[1] = {amplified_error};
 
     cl_int err;
     cl_mem target_buffer = clCreateBuffer(neuralNet->context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float)* 1,target_output,&err);
