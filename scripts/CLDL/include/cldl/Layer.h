@@ -15,7 +15,8 @@
 
 class Layer {
 public:
-    Layer(int _nNeurons, int _nInputs, int _numBuses);
+    // Layer(int _nNeurons, int _nInputs, int _numBuses);
+    Layer(int _nNeurons, int _nInputs);
     ~Layer();
 
     friend class Net;

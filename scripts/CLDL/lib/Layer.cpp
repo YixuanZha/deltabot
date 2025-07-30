@@ -15,31 +15,38 @@
 // constructor de-constructor
 //*************************************************************************************
 
-Layer::Layer(int _nNeurons, int _nInputs, int _numBuses){
-    nNeurons = _nNeurons; // number of neurons in this layer
-    nInputs = _nInputs; // number of inputs to each neuron
-    neurons = new Neuron*[nNeurons];
-    numBuses = _numBuses;
-    /* dynamic allocation of memory to n number of
-     * neuron-pointers and returning a pointer, "neurons",
-     * to the first element */
-    for (int i=0;i<nNeurons;i++){
-        neurons[i]=new Neuron(nInputs, numBuses);
-    }
-    /* each element of "neurons" pointer is itself a pointer
-     * to a neuron object with specific no. of inputs*/
-     //cout << "layer" << endl;
+// Layer::Layer(int _nNeurons, int _nInputs, int _numBuses){
+//     nNeurons = _nNeurons; // number of neurons in this layer
+//     nInputs = _nInputs; // number of inputs to each neuron
+//     neurons = new Neuron*[nNeurons];
+//     numBuses = _numBuses;
+//     /* dynamic allocation of memory to n number of
+//      * neuron-pointers and returning a pointer, "neurons",
+//      * to the first element */
+//     for (int i=0;i<nNeurons;i++){
+//         neurons[i]=new Neuron(nInputs, numBuses);
+//     }
+//     /* each element of "neurons" pointer is itself a pointer
+//      * to a neuron object with specific no. of inputs*/
+//      //cout << "layer" << endl;
+// }
+
+Layer::Layer(int _nNeurons, int _nInputs)
+{
+    nNeurons = _nNeurons;
+    nInputs = _nInputs;
 }
 
-Layer::~Layer(){
-    for(int i=0;i<nNeurons;i++) {
-        delete neurons[i];
-    }
-    delete[] neurons;
-    //delete[] inputs;
-    /* it is important to delete any dynamic
-     * memory allocation created by "new" */
-}
+// Layer::~Layer(){
+//     for(int i=0;i<nNeurons;i++) {
+//         delete neurons[i];
+//     }
+//     delete[] neurons;
+//     //delete[] inputs;
+//     /* it is important to delete any dynamic
+//      * memory allocation created by "new" */
+// }
+Layer::~Layer(){}
 
 //*************************************************************************************
 //initialisation:
