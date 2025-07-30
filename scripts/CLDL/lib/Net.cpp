@@ -429,8 +429,8 @@ void Net::customBackProp(cl_mem target_outputs_buffer)
         err |= clSetKernelArg(backprop_error_kernel, 1, sizeof(cl_mem), &next_layer->weights_buffer);
         err |= clSetKernelArg(backprop_error_kernel, 2, sizeof(cl_mem), &current_layer->sum_outputs_buffer);
         err |= clSetKernelArg(backprop_error_kernel, 3, sizeof(cl_mem), &current_layer->internal_errors_buffer);
-        err |= clSetKernelArg(backprop_error_kernel, 4, sizeof(cl_mem), &next_layer->nNeurons);
-        err |= clSetKernelArg(backprop_error_kernel, 5, sizeof(cl_mem), &current_layer->nNeurons);
+        err |= clSetKernelArg(backprop_error_kernel, 4, sizeof(int), &next_layer->nNeurons);
+        err |= clSetKernelArg(backprop_error_kernel, 5, sizeof(int), &current_layer->nNeurons);
 
         // execute the kernel
         global_work_size = current_layer->getnNeurons();
@@ -457,9 +457,9 @@ void Net::updateWeights()
         err = clSetKernelArg(update_weights_kernel, 1, sizeof(cl_mem), &current_input_buffer);
         err = clSetKernelArg(update_weights_kernel, 2, sizeof(cl_mem), &current_layer->weights_buffer);
         err = clSetKernelArg(update_weights_kernel, 3, sizeof(cl_mem), &current_layer->biases_buffer);
-        err = clSetKernelArg(update_weights_kernel, 4, sizeof(cl_mem), &learningRate);
-        err = clSetKernelArg(update_weights_kernel, 5, sizeof(cl_mem), &current_layer->nInputs);
-        err = clSetKernelArg(update_weights_kernel, 6, sizeof(cl_mem), &current_layer->nNeurons);
+        err = clSetKernelArg(update_weights_kernel, 4, sizeof(float), &learningRate);
+        err = clSetKernelArg(update_weights_kernel, 5, sizeof(int), &current_layer->nInputs);
+        err = clSetKernelArg(update_weights_kernel, 6, sizeof(int), &current_layer->nNeurons);
 
         size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(), (size_t)current_layer->getnNeurons()};
 
