@@ -102,7 +102,7 @@ private:
     cl_kernel update_weights_kernel;
     cl_kernel calculate_output_error_kernel;
 
-    cl_mem net_input_buffer;
+    cl_mem net_input_buffer = nullptr   ;
 
     void initCL();
     void buildKernels();
