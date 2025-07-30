@@ -62,7 +62,7 @@ __kernel void update_weights_kernel(__global const float *errors,
 }
 
 __kernel void
-calcultae_output_error_kernel(__global const float *activated_outputs,
+calculate_output_error_kernel(__global const float *activated_outputs,
                              __global const float *target_outputs,
                              __global const float *sum_outputs,
                              __global float *errors_out) {
