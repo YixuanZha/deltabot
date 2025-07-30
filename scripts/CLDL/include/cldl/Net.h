@@ -43,33 +43,33 @@ public:
         FORWARD = 1
     };
     void initNetwork(Neuron::weightInitMethod _wim, Neuron::biasInitMethod _bim, Neuron::actMethod _am);
-    void setLearningRate(double _learningRate);
-    void setInputs(const double *_inputs);
+    void setLearningRate(float _learningRate);
+    void setInputs(const float *_inputs);
     void propInputs();
     void masterPropagate(std::vector<int> &injectionLayerIndex,
                          int _internalErrorIndex, propagationDirection _propDir,
-                         double _controlError, Neuron::errorMethod _errorMethod, bool _doThread);
+                         float _controlError, Neuron::errorMethod _errorMethod, bool _doThread);
     void customBackProp(std::vector<int> &startLayerIndex,
-                        int internalErrorIndex, double _controlError,
+                        int internalErrorIndex, float _controlError,
                         Neuron::errorMethod _errorMethod, bool _doThread);
     void customBackProp(std::vector<int> &startLayerIndex,
-                        int internalErrorIndex, double _controlError,
+                        int internalErrorIndex, float _controlError,
                         Neuron::errorMethod _errorMethod);
     void customBackProp(cl_mem target_outputs_buffer);
     void customForwardProp(std::vector<int> &injectionLayerIndex,
-                           int _internalErrorIndex, double _controlError,
+                           int _internalErrorIndex, float _controlError,
                            Neuron::errorMethod _errorMethod);
     void updateWeights();
     Layer *getLayer(int _layerIndex);
-    double getOutput(int _neuronIndex);
-    double getSumOutput(int _neuronIndex);
+    float getOutput(int _neuronIndex);
+    float getSumOutput(int _neuronIndex);
     int getnLayers();
     int getnInputs();
-    double getWeightDistance();
-    double getLayerWeightDistance(int _layerIndex);
-    double getWeights(int _layerIndex, int _neuronIndex, int _weightIndex);
+    float getWeightDistance();
+    float getLayerWeightDistance(int _layerIndex);
+    float getWeights(int _layerIndex, int _neuronIndex, int _weightIndex);
     int getnNeurons();
-    double getInputs(int _inputIndex);
+    float getInputs(int _inputIndex);
     void saveWeights();
     void snapFistLayerWeights();
     void snapWeights();
@@ -85,11 +85,11 @@ private:
     int nWeights = 0;
     int nInputs = 0;
     int nOutputs = 0;
-    double learningRate = 0;
+    float learningRate = 0;
     Layer **layers = nullptr;
-    const double *inputs = nullptr;
-    double controlError = 0;
-    double echoError = 0;
+    const float *inputs = nullptr;
+    float controlError = 0;
+    float echoError = 0;
 
     // OpenCL member variable
     cl_platform_id platform_id;

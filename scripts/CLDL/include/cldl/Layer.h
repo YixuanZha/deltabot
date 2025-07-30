@@ -21,25 +21,25 @@ public:
     friend class Net;
 
     void initLayer(int _layerIndex, Neuron::weightInitMethod _wim, Neuron::biasInitMethod _bim, Neuron::actMethod _am);
-    void setLearningRate(double _learningRate);
-    void setInputs(const double *_inputs);
-    void propInputs(int _index, double _value);
+    void setLearningRate(float _learningRate);
+    void setInputs(const float *_inputs);
+    void propInputs(int _index, float _value);
     void calcOutputs();
-    void setInternalErrors(int _internalErrorIndex, double _sumValue,
+    void setInternalErrors(int _internalErrorIndex, float _sumValue,
                            int _neuronIndex, Neuron::errorMethod _errorMethod);
-    double getInternalErrors(int _internalErrorIndex, int _neuronIndex);
-    void setErrorInputsAndCalculateInternalError(int _index, double _value,
+    float getInternalErrors(int _internalErrorIndex, int _neuronIndex);
+    void setErrorInputsAndCalculateInternalError(int _index, float _value,
                                                  int _internalErrorIndex,
                                                  Neuron::errorMethod _errorMethod);
     void updateWeights();
     Neuron *getNeuron(int _neuronIndex);
     int getnNeurons();
-    double getOutput(int _neuronIndex);
-    double getSumOutput(int _neuronIndex);
-    double getWeights(int _neuronIndex, int _weightIndex);
-    double getWeightChange();
-    double getWeightDistance();
-    double getInitWeight(int _neuronIndex, int _weightIndex);
+    float getOutput(int _neuronIndex);
+    float getSumOutput(int _neuronIndex);
+    float getWeights(int _neuronIndex, int _weightIndex);
+    float getWeightChange();
+    float getWeightDistance();
+    float getInitWeight(int _neuronIndex, int _weightIndex);
     void saveWeights();
     void snapWeights();
     void printLayer();
@@ -48,13 +48,13 @@ private:
     // initialisation:
     int nNeurons = 0;
     int nInputs = 0;
-    double learningRate = 0;
+    float learningRate = 0;
     int myLayerIndex = 0;
     Neuron **neurons = nullptr;
     int numBuses = 0;
     int layerHasReported = 0;
-    const double *inputs = nullptr;
-    double weightChange=0;
+    const float *inputs = nullptr;
+    float weightChange=0;
 
     cl_mem weights_buffer;
     cl_mem biases_buffer;

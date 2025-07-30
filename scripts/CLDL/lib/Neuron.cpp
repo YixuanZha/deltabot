@@ -16,15 +16,15 @@ using namespace std;
 Neuron::Neuron(int _nInputs, int _numBuses)
 {
     nInputs=_nInputs;
-    weights = new double[nInputs];
-    initialWeights = new double[nInputs];
-    inputs = new double[nInputs];
-    inputErrors = new double[nInputs];
+    weights = new float[nInputs];
+    initialWeights = new float[nInputs];
+    inputs = new float[nInputs];
+    inputErrors = new float[nInputs];
     numBuses = _numBuses;
-    rawInternalErrors = new double[numBuses];
+    rawInternalErrors = new float[numBuses];
     busIsSet = new bool[numBuses];
     busMethod = new int(numBuses);
-    internalErrors = new double(numBuses);
+    internalErrors = new float(numBuses);
     for (int i = 0 ; i <numBuses; i++){
         busIsSet[i] = false;
         busMethod[i] = 0;
@@ -56,7 +56,7 @@ void Neuron::initNeuron(int _neuronIndex, int _layerIndex, weightInitMethod _wim
                 weights[i] = 1;
                 break;
             case W_RANDOM:
-                weights[i] = (((double) rand() / (RAND_MAX))); //* 2) -1;
+                weights[i] = (((float) rand() / (RAND_MAX))); //* 2) -1;
                 break;
                 //cout << " Neuron: weight is: " << weights[i] << endl;
                 /* rand function generates a random function between
@@ -77,7 +77,7 @@ void Neuron::initNeuron(int _neuronIndex, int _layerIndex, weightInitMethod _wim
             bias=0;
             break;
         case B_RANDOM:
-            bias=((double)rand()/RAND_MAX);
+            bias=((float)rand()/RAND_MAX);
             break;
     }
     switch(_am){
@@ -93,11 +93,11 @@ void Neuron::initNeuron(int _neuronIndex, int _layerIndex, weightInitMethod _wim
     }
 }
 
-void Neuron::setLearningRate(double _learningRate){
+void Neuron::setLearningRate(float _learningRate){
     learningRate=_learningRate;
 }
 
-void Neuron::setInput(int _index,  double _value) {
+void Neuron::setInput(int _index,  float _value) {
     /* the seInput function sets one input value at the given index,
      * it has to be implemented in a loop inside the layer class to set
      * all the inputs associated with all the neurons in that layer*/
@@ -107,7 +107,7 @@ void Neuron::setInput(int _index,  double _value) {
     //cout << "Neuron the input is: " << _value << endl;
 }
 
-void Neuron::propInputs(int _index,  double _value){
+void Neuron::propInputs(int _index,  float _value){
     /*works like setInput function expect it only applies
      * to the neurons in the hidden and output layers
      * and not the input layer*/
@@ -136,13 +136,13 @@ int Neuron::calcOutput(int _layerHasReported){
 }
 
 void Neuron::setErrorInputsAndCalculateInternalError(int _inputIndex,
-                                                     double _value, int _internalErrorIndex,
+                                                     float _value, int _internalErrorIndex,
                                                      errorMethod _errorMethod){
     assert((_inputIndex>=0)&&(_inputIndex<nInputs) && "Inadequate number of inputs provided");
     inputErrors[_inputIndex] = _value;
     countInputErrors += 1;
     if (countInputErrors == nInputs){
-        double errorSum =0;
+        float errorSum =0;
         for (int i=0; i<nInputs; i++) {
             errorSum += inputErrors[i] * weights[i];
         }
@@ -182,7 +182,7 @@ void Neuron::setErrorInputsAndCalculateInternalError(int _inputIndex,
     }
 }
 
-void Neuron::setInternalError(int _internalErrorIndex, double _sumValue,
+void Neuron::setInternalError(int _internalErrorIndex, float _sumValue,
                               errorMethod _errorMethod){
 //    cout << "index: " << _internalErrorIndex << " value: " << _sumValue << endl;
     assert((std::isfinite(_sumValue)) && (_internalErrorIndex<numBuses)
@@ -222,7 +222,7 @@ void Neuron::setInternalError(int _internalErrorIndex, double _sumValue,
         }
 }
 
-double Neuron::getRawInternalErrors(int _internalErrorIndex){
+float Neuron::getRawInternalErrors(int _internalErrorIndex){
     assert((_internalErrorIndex>=0) && (_internalErrorIndex<numBuses) && "Neuron failed");
     assert(busIsSet[_internalErrorIndex] == true && "Neuron failed");
     return rawInternalErrors[_internalErrorIndex];
@@ -238,7 +238,7 @@ void Neuron::updateWeights(){
     weightSum = 0;
     maxWeight = 0;
     minWeight = 0;
-    double force = 1;
+    float force = 1;
     if (myLayerIndex == 0){
         force  = weightBoost; //forces a bigger change on the first layer for visualisation in greyscale
     }
@@ -259,8 +259,8 @@ void Neuron::updateWeights(){
     }
 }
 
-double Neuron::doActivation(double _sum){
-    double thisoutput = 0;
+float Neuron::doActivation(float _sum){
+    float thisoutput = 0;
     switch(actMet){
         case 0:
             thisoutput = (1/(1+(exp(-_sum)))) - 0.5;
@@ -275,8 +275,8 @@ double Neuron::doActivation(double _sum){
     return (thisoutput);
 }
 
-double Neuron::doActivationPrime(double _input){
-    double result = 0;
+float Neuron::doActivationPrime(float _input){
+    float result = 0;
     switch(actMet){
         case 0:
             result = 1 * (0.5 + doActivation(_input)) * (0.5 - doActivation(_input)); //exp(-_input) / pow((exp(-_input) + 1),2);
@@ -295,27 +295,27 @@ double Neuron::doActivationPrime(double _input){
 // getters:
 //*************************************************************************************
 
-double Neuron::getOutput(){
+float Neuron::getOutput(){
     return (output);
 }
 
-double Neuron::getSumOutput(){
+float Neuron::getSumOutput(){
     return (sum);
 }
 
-double Neuron::getMaxWeight(){
+float Neuron::getMaxWeight(){
   return maxWeight;
 }
 
-double Neuron::getMinWeight(){
+float Neuron::getMinWeight(){
   return minWeight;
 }
 
-double Neuron::getSumWeight(){
+float Neuron::getSumWeight(){
   return weightSum;
 }
 
-double Neuron::getWeightChange(){
+float Neuron::getWeightChange(){
     weightsDifference = 0;
     weightChange = 0;
     for (int i=0; i<nInputs; i++){
@@ -326,7 +326,7 @@ double Neuron::getWeightChange(){
     return (weightChange);
 }
 
-double Neuron::getWeightDistance(){
+float Neuron::getWeightDistance(){
     getWeightChange();
     return sqrt(weightChange);
 }
@@ -335,17 +335,17 @@ int Neuron::getnInputs(){
     return (nInputs);
 }
 
-double Neuron::getWeights(int _inputIndex){
+float Neuron::getWeights(int _inputIndex){
     assert((_inputIndex>=0)&&(_inputIndex<nInputs) && "Neuron failed");
     return (weights[_inputIndex]);
 }
 
-double Neuron::getInputs(int _inputIndex){
+float Neuron::getInputs(int _inputIndex){
     assert((_inputIndex>=0)&&(_inputIndex<nInputs) && "Neuron failed");
     return (inputs[_inputIndex]);
 }
 
-double Neuron::getInitWeights(int _inputIndex){
+float Neuron::getInitWeights(int _inputIndex){
     assert((_inputIndex>=0)&&(_inputIndex<nInputs) && "Neuron failed");
     return (initialWeights[_inputIndex]);
 }

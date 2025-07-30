@@ -46,8 +46,8 @@ void LineFollower::start()
             }
             cv::flip(frame, frame, 0);
 
-            std::vector<double> inputs;
-            double error_near = 0.0, error_far = 0.0; // Initialize errors
+            std::vector<float> inputs;
+            float error_near = 0.0, error_far = 0.0; // Initialize errors
             bool line_found = ProcessFrameAndGetInputs(frame, inputs, error_near, error_far);
 
             switch (currentState)
@@ -128,7 +128,7 @@ void LineFollower::stop()
 // |density:0.0|    0.0    |    0.2    |    0.2    |    0.0    |    0.0    |    0.0    |
 // +-----------+-----------+-----------+-----------+-----------+-----------+-----------+
 
-bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs, double &error_near, double &error_far)
+bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<float> &inputs, float &error_near, float &error_far)
 {
     cv::Mat hsv, binary;
     cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
@@ -154,7 +154,7 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     bool line_found_near = false;
     if (m_near.m00 > 100) // Check if the near segment has enough mass
     {
-        double cx = m_near.m10 / m_near.m00;
+        float cx = m_near.m10 / m_near.m00;
         error_near = (cx - roi_near.cols / 2.0) / (roi_near.cols / 2.0); // Calculate error based on the center of mass
         line_found_near = true;
     }
@@ -166,7 +166,7 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     bool line_found_far = false;
     if (m_far.m00 > 100) // Check if the far segment has enough mass
     {
-        double cx = m_far.m10 / m_far.m00;
+        float cx = m_far.m10 / m_far.m00;
         error_far = (cx - roi_far.cols / 2.0) / (roi_far.cols / 2.0); // Calculate error based on the center of mass
         line_found_far = true;
     }
@@ -190,22 +190,22 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<do
     return line_found_near || line_found_far;
 }
 
-void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double error_near, double error_far)
+void LineFollower::UpdateAndTrain(const std::vector<float> &inputs, float error_near, float error_far)
 {
     neuralNet->setInputs(inputs.data());
     neuralNet->propInputs();
-    double nn_steering_output = neuralNet->getOutput(0); // Get the neural network output for steering
+    float nn_steering_output = neuralNet->getOutput(0); // Get the neural network output for steering
 
     float p_term = nn_steering_output * proportional_gain; // Proportional term for the controller
 
-    double error_derivative = error_near - last_error; // Calculate the derivative of the error
+    float error_derivative = error_near - last_error; // Calculate the derivative of the error
     float d_term = error_derivative * derivative_gain; // Derivative term for the controller
 
-    double heading_error = error_far - error_near; // Calculate the heading error based on the near and far segment errors
+    float heading_error = error_far - error_near; // Calculate the heading error based on the near and far segment errors
     float h_term = heading_error * heading_gain;   // Heading term for the controller
 
     heading_error_integral += heading_error; // Update the integral of the heading error
-    double integral_limit = 20.0; // Limit for the integral term to prevent windup
+    float integral_limit = 20.0; // Limit for the integral term to prevent windup
     heading_error_integral = std::max(-integral_limit, std::min(integral_limit, heading_error_integral)); // Clamp the integral term
     float i_term = heading_error_integral * integral_gain; // Integral term for the controller
 
@@ -220,18 +220,18 @@ void LineFollower::UpdateAndTrain(const std::vector<double> &inputs, double erro
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed)); // Clamp the speed values to a range of -10 to 10
     deltabot.SetMotorSpeed(left_speed, right_speed);              // Set the motor speeds based on the calculated adjustments
 
-    // double network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
-    // double amplified_error = network_error * error_gain;
+    // float network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
+    // float amplified_error = network_error * error_gain;
 
     // int lastLayerIndex = neuralNet->getnLayers() - 1;
     // std::vector<int> injection_layers = {lastLayerIndex, 0};
     // neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false); // Perform backpropagation to update the weights based on the error
     // neuralNet->updateWeights();
 
-    double target_output[1] = {error_near};
+    float target_output[1] = {error_near};
 
     cl_int err;
-    cl_mem target_buffer = clCreateBuffer(neuralNet->context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(double)* 1,target_output,&err);
+    cl_mem target_buffer = clCreateBuffer(neuralNet->context,CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float)* 1,target_output,&err);
     
     neuralNet->customBackProp(target_buffer);
     neuralNet->updateWeights();

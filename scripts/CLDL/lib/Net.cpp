@@ -157,7 +157,7 @@ void Net::initNetwork(Neuron::weightInitMethod _wim,
     }
 }
 
-void Net::setLearningRate(double _learningRate)
+void Net::setLearningRate(float _learningRate)
 {
     learningRate = _learningRate;
     for (int i = 0; i < nLayers; i++)
@@ -170,18 +170,18 @@ void Net::setLearningRate(double _learningRate)
 // forward propagation of inputs:
 //*************************************************************************************
 
-void Net::setInputs(const double *_inputs)
+void Net::setInputs(const float *_inputs)
 {
     // inputs = _inputs;
     // layers[0]->setInputs(inputs); // sets the inputs to the first layer only
     cl_int err;
     if (!net_input_buffer)
     {
-        net_input_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(double) * nInputs, NULL, &err);
+        net_input_buffer = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(float) * nInputs, NULL, &err);
         checkError(err, "Net input buffer creation");
     }
 
-    err = clEnqueueWriteBuffer(command_queue, net_input_buffer, CL_TRUE, 0, sizeof(double) * nInputs, _inputs, 0, NULL, NULL);
+    err = clEnqueueWriteBuffer(command_queue, net_input_buffer, CL_TRUE, 0, sizeof(float) * nInputs, _inputs, 0, NULL, NULL);
     checkError(err, "Write to net input buffer");
 }
 
@@ -192,7 +192,7 @@ void Net::propInputs()
     //     layers[i]->calcOutputs();
     //     for (int j = 0; j < layers[i]->getnNeurons(); j++)
     //     {
-    //         double inputOuput = layers[i]->getOutput(j);
+    //         float inputOuput = layers[i]->getOutput(j);
     //         layers[i + 1]->propInputs(j, inputOuput);
     //     }
     // }
@@ -225,7 +225,7 @@ void Net::propInputs()
 
 void Net::masterPropagate(std::vector<int> &injectionLayerIndex,
                           int _internalErrorIndex, propagationDirection _propDir,
-                          double _controlError, Neuron::errorMethod _errorMethod, bool _doThread)
+                          float _controlError, Neuron::errorMethod _errorMethod, bool _doThread)
 {
     switch (_propDir)
     {
@@ -254,7 +254,7 @@ void Net::masterPropagate(std::vector<int> &injectionLayerIndex,
 // forward propagation of error:
 //*************************************************************************************
 void Net::customForwardProp(std::vector<int> &injectionLayerIndex,
-                            int _internalErrorIndex, double _controlError,
+                            int _internalErrorIndex, float _controlError,
                             Neuron::errorMethod _errorMethod)
 {
     assert(injectionLayerIndex[0] == 0 && "Forward propagation must start form the first layer, include (0) in your array");
@@ -266,7 +266,7 @@ void Net::customForwardProp(std::vector<int> &injectionLayerIndex,
         layers[nextInjectionLayerIndex]->setInternalErrors(_internalErrorIndex,
                                                            controlError, i, _errorMethod); // setting the internal errors in the first layer
     }
-    double inputOutput = 0.00;
+    float inputOutput = 0.00;
     for (int layerIndex = nextInjectionLayerIndex; layerIndex < nLayers - 1; layerIndex++)
     {
         for (int N_index = 0; N_index < layers[layerIndex]->getnNeurons(); N_index++)
@@ -290,7 +290,7 @@ void Net::customForwardProp(std::vector<int> &injectionLayerIndex,
 }
 
 void Net::customBackProp(std::vector<int> &injectionLayerIndex,
-                         int _internalErrorIndex, double _controlError,
+                         int _internalErrorIndex, float _controlError,
                          Neuron::errorMethod _errorMethod, bool _doThread)
 {
     assert(injectionLayerIndex[0] == nLayers - 1 && "Backpropagation must start form the last layer, include (Nlayers - 1) in your array");
@@ -341,12 +341,12 @@ void Net::customBackProp(std::vector<int> &injectionLayerIndex,
 }
 
 void Net::customBackProp(std::vector<int> &injectionLayerIndex,
-                         int _internalErrorIndex, double _controlError,
+                         int _internalErrorIndex, float _controlError,
                          Neuron::errorMethod _errorMethod)
 {
     assert(injectionLayerIndex[0] == nLayers - 1 && "Backpropagation must start form the last layer, include (Nlayers - 1) in your array");
-    double tempError = 0;
-    double tempWeight = 0;
+    float tempError = 0;
+    float tempWeight = 0;
     int nextInjectionLayerIndex = injectionLayerIndex[0];
     int injectionCount = 0;
     controlError = _controlError;
@@ -359,7 +359,7 @@ void Net::customBackProp(std::vector<int> &injectionLayerIndex,
     { // iterate through the layers
         for (int wn_index = 0; wn_index < layers[layerIndex - 1]->getnNeurons(); wn_index++)
         { // iterate through the inputs to each layer
-            double thisSum = 0.00;
+            float thisSum = 0.00;
             for (int n_index = 0; n_index < layers[layerIndex]->getnNeurons(); n_index++)
             { // iterate through the neurons of each layer
                 if (layerIndex == nextInjectionLayerIndex)
@@ -454,7 +454,7 @@ void Net::updateWeights()
 // getters:
 //*************************************************************************************
 
-double Net::getOutput(int _neuronIndex)
+float Net::getOutput(int _neuronIndex)
 {
     // return (layers[nLayers - 1]->getOutput(_neuronIndex));
     Layer* last_layer = layers[nLayers - 1];
@@ -465,15 +465,15 @@ double Net::getOutput(int _neuronIndex)
         return 0.0;
     }
 
-    std::vector<double> host_output(last_layer->getnNeurons());
+    std::vector<float> host_output(last_layer->getnNeurons());
 
-    cl_int err = clEnqueueReadBuffer(command_queue,last_layer->activated_outputs_buffer,CL_TRUE,0,sizeof(double)* last_layer->getnNeurons(),host_output.data(),0,NULL,NULL);
+    cl_int err = clEnqueueReadBuffer(command_queue,last_layer->activated_outputs_buffer,CL_TRUE,0,sizeof(float)* last_layer->getnNeurons(),host_output.data(),0,NULL,NULL);
     checkError(err, "Read final output buffer in getOutput");
 
     return host_output[_neuronIndex];
 }
 
-double Net::getSumOutput(int _neuronIndex)
+float Net::getSumOutput(int _neuronIndex)
 {
     return (layers[nLayers - 1]->getSumOutput(_neuronIndex));
 }
@@ -494,10 +494,10 @@ Layer *Net::getLayer(int _layerIndex)
     return (layers[_layerIndex]);
 }
 
-double Net::getWeightDistance()
+float Net::getWeightDistance()
 {
-    double weightChange = 0;
-    double weightDistance = 0;
+    float weightChange = 0;
+    float weightDistance = 0;
     for (int i = 0; i < nLayers; i++)
     {
         weightChange += layers[i]->getWeightChange();
@@ -507,14 +507,14 @@ double Net::getWeightDistance()
     return (weightDistance);
 }
 
-double Net::getLayerWeightDistance(int _layerIndex)
+float Net::getLayerWeightDistance(int _layerIndex)
 {
     return layers[_layerIndex]->getWeightDistance();
 }
 
-double Net::getWeights(int _layerIndex, int _neuronIndex, int _weightIndex)
+float Net::getWeights(int _layerIndex, int _neuronIndex, int _weightIndex)
 {
-    double weight = layers[_layerIndex]->getWeights(_neuronIndex, _weightIndex);
+    float weight = layers[_layerIndex]->getWeights(_neuronIndex, _weightIndex);
     return (weight);
 }
 
@@ -523,7 +523,7 @@ int Net::getnNeurons()
     return (nNeurons);
 }
 
-double Net::getInputs(int _inputIndex)
+float Net::getInputs(int _inputIndex)
 {
     return inputs[_inputIndex];
 }

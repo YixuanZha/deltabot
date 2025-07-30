@@ -52,7 +52,7 @@ void Layer::initLayer(int _layerIndex, Neuron::weightInitMethod _wim, Neuron::bi
     }
 }
 
-void Layer::setLearningRate(double _learningRate){
+void Layer::setLearningRate(float _learningRate){
     learningRate=_learningRate;
     for (int i=0; i<nNeurons; i++){
         neurons[i]->setLearningRate(learningRate);
@@ -63,7 +63,7 @@ void Layer::setLearningRate(double _learningRate){
 //forward propagation of inputs:
 //*************************************************************************************
 
-void Layer::setInputs(const double* _inputs){
+void Layer::setInputs(const float* _inputs){
     /*this is only for the first layer*/
     inputs=_inputs;
     for (int j=0; j<nInputs; j++){
@@ -72,7 +72,7 @@ void Layer::setInputs(const double* _inputs){
          * within the scope of this function. this is inside
          * the loop, so that it is set to the first neuron
          * everytime a new value is distributed to neurons */
-        double input= *inputs; //take this input value
+        float input= *inputs; //take this input value
         for (int i=0; i<nNeurons; i++){
             (*neuronsp)->setInput(j,input);
             //set this input value for this neuron
@@ -82,7 +82,7 @@ void Layer::setInputs(const double* _inputs){
     }
 }
 
-void Layer::propInputs(int _index, double _value){
+void Layer::propInputs(int _index, float _value){
     for (int i=0; i<nNeurons; i++){
         neurons[i]->propInputs(_index, _value);
     }
@@ -99,7 +99,7 @@ void Layer::calcOutputs(){
 //*************************************************************************************
 
 void Layer::setErrorInputsAndCalculateInternalError(int _index,
-                                                    double _value,int _internalErrorIndex,
+                                                    float _value,int _internalErrorIndex,
                                                     Neuron::errorMethod _errorMethod){
     for (int i=0; i<nNeurons; i++){
         neurons[i]->setErrorInputsAndCalculateInternalError(_index, _value,
@@ -109,7 +109,7 @@ void Layer::setErrorInputsAndCalculateInternalError(int _index,
 //*************************************************************************************
 //back propagation of error:
 //*************************************************************************************
-void Layer::setInternalErrors(int _internalErrorIndex, double _sumValue,
+void Layer::setInternalErrors(int _internalErrorIndex, float _sumValue,
                               int _neuronIndex, Neuron::errorMethod _errorMethod){
     assert(isfinite(_sumValue) && (_internalErrorIndex >= 0)
                 && (_internalErrorIndex < numBuses) &&
@@ -118,7 +118,7 @@ void Layer::setInternalErrors(int _internalErrorIndex, double _sumValue,
                                             _errorMethod);
 }
 
-double Layer::getInternalErrors(int _internalErrorIndex, int _neuronIndex){
+float Layer::getInternalErrors(int _internalErrorIndex, int _neuronIndex){
     assert((_neuronIndex<nNeurons) && (_neuronIndex>=0) && "Layer failed");
     return neurons[_neuronIndex]->getRawInternalErrors(_internalErrorIndex);
 }
@@ -139,19 +139,19 @@ Neuron* Layer::getNeuron(int _neuronIndex){
     return (neurons[_neuronIndex]);
 }
 
-double Layer::getSumOutput(int _neuronIndex){
+float Layer::getSumOutput(int _neuronIndex){
     return (neurons[_neuronIndex]->getSumOutput());
 }
 
-double Layer::getWeights(int _neuronIndex, int _weightIndex){
+float Layer::getWeights(int _neuronIndex, int _weightIndex){
     return (neurons[_neuronIndex]->getWeights(_weightIndex));
 }
 
-double Layer::getInitWeight(int _neuronIndex, int _weightIndex){
+float Layer::getInitWeight(int _neuronIndex, int _weightIndex){
     return (neurons[_neuronIndex]->getInitWeights(_weightIndex));
 }
 
-double Layer::getWeightChange(){
+float Layer::getWeightChange(){
     weightChange=0;
     for (int i=0; i<nNeurons; i++){
         weightChange += neurons[i]->getWeightChange();
@@ -160,12 +160,12 @@ double Layer::getWeightChange(){
     return (weightChange);
 }
 
-double Layer::getWeightDistance(){
+float Layer::getWeightDistance(){
     getWeightChange();
     return sqrt(weightChange);
 }
 
-double Layer::getOutput(int _neuronIndex){
+float Layer::getOutput(int _neuronIndex){
     return (neurons[_neuronIndex]->getOutput());
 }
 
