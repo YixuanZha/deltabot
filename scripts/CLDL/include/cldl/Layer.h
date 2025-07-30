@@ -9,6 +9,7 @@
 #include <string>
 #include <numeric>
 #include <vector>
+#include <CL/cl.h>
 
 #include "Neuron.h"
 
@@ -16,6 +17,9 @@ class Layer {
 public:
     Layer(int _nNeurons, int _nInputs, int _numBuses);
     ~Layer();
+
+    friend class Net;
+
     void initLayer(int _layerIndex, Neuron::weightInitMethod _wim, Neuron::biasInitMethod _bim, Neuron::actMethod _am);
     void setLearningRate(double _learningRate);
     void setInputs(const double *_inputs);
@@ -51,4 +55,10 @@ private:
     int layerHasReported = 0;
     const double *inputs = nullptr;
     double weightChange=0;
+
+    cl_mem weights_buffer;
+    cl_mem biases_buffer;
+    cl_mem sum_outputs_buffer;
+    cl_mem activated_outputs_buffer;
+    cl_mem internal_errors_buffer;
 };
