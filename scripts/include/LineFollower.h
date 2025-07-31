@@ -104,9 +104,9 @@ private:
     double last_error = 0.0;
     double heading_error_integral = 0.0;
     float proportional_gain = 2.0f; // Proportional gain for the controller
-    float derivative_gain = 0.2f;   // Derivative gain for the controller
-    float heading_gain = 2.5f;      // Heading gain for the controller
-    float integral_gain = 0.05f;    // Integral gain for the controller
+    float derivative_gain = 0.0f;   // Derivative gain for the controller
+    float heading_gain = 0.0f;      // Heading gain for the controller
+    float integral_gain = 0.0f;    // Integral gain for the controller
 };
 
 #endif
