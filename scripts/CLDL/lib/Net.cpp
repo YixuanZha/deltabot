@@ -447,7 +447,7 @@ void Net::updateWeights()
         err |= clSetKernelArg(update_weights_kernel, 2, sizeof(cl_mem), &current_layer->weights_buffer);
         err |= clSetKernelArg(update_weights_kernel, 3, sizeof(float), &learningRate);
         err |= clSetKernelArg(update_weights_kernel, 4, sizeof(int), &current_layer->nInputs);
-        err |= clSetKernelArg(update_weights_kernel, 5u, sizeof(int), &current_layer->nNeurons);
+        err |= clSetKernelArg(update_weights_kernel, 5, sizeof(int), &current_layer->nNeurons);
 
         size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(), (size_t)current_layer->getnInputs()};
 
