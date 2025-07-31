@@ -16,7 +16,6 @@
 #include <numeric>
 #include <vector>
 
-#define CL_TARGET_OPENCL_VERSION 300
 #include <CL/cl.h>
 
 #include "Layer.h"
@@ -55,11 +54,12 @@ public:
     void customBackProp(std::vector<int> &startLayerIndex,
                         int internalErrorIndex, float _controlError,
                         Neuron::errorMethod _errorMethod);
-    void customBackProp(cl_mem target_outputs_buffer);
+    void customBackProp(float network_error,float error_gain);
     void customForwardProp(std::vector<int> &injectionLayerIndex,
                            int _internalErrorIndex, float _controlError,
                            Neuron::errorMethod _errorMethod);
     void updateWeights();
+    void injectErrorDirectly(float network_error, float error_gain);
     Layer *getLayer(int _layerIndex);
     float getOutput(int _neuronIndex);
     float getSumOutput(int _neuronIndex);
@@ -102,7 +102,7 @@ private:
     cl_kernel update_weights_kernel;
     cl_kernel calculate_output_error_kernel;
 
-    cl_mem net_input_buffer = nullptr   ;
+    cl_mem net_input_buffer = nullptr;
 
     void initCL();
     void buildKernels();

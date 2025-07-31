@@ -403,23 +403,11 @@ void Net::customBackProp(std::vector<int> &injectionLayerIndex,
     }
 }
 
-void Net::customBackProp(cl_mem target_outputs_buffer)
+void Net::customBackProp(float network_error, float error_gain)
 {
     cl_int err;
 
-    // Calculate the error of output layer
-    Layer *last_layer = layers[nLayers - 1];
-
-    // Set kernel parameter for the calculation
-    err = clSetKernelArg(calculate_output_error_kernel, 0, sizeof(cl_mem), &last_layer->activated_outputs_buffer);
-    err |= clSetKernelArg(calculate_output_error_kernel, 1, sizeof(cl_mem), &target_outputs_buffer);
-    err |= clSetKernelArg(calculate_output_error_kernel, 2, sizeof(cl_mem), &last_layer->sum_outputs_buffer);
-    err |= clSetKernelArg(calculate_output_error_kernel, 3, sizeof(cl_mem), &last_layer->internal_errors_buffer);
-
-    // execute the kernel
-    size_t global_work_size = last_layer->getnNeurons();
-    err = clEnqueueNDRangeKernel(command_queue, calculate_output_error_kernel, 1, NULL, &global_work_size, NULL, 0, NULL, NULL);
-    checkError(err, "Enqueue calculate_output_error_kernel");
+    injectErrorDirectly(network_error, error_gain);
 
     for (int i = nLayers - 2; i >= 0; i--)
     {
@@ -434,7 +422,7 @@ void Net::customBackProp(cl_mem target_outputs_buffer)
         err |= clSetKernelArg(backprop_error_kernel, 5, sizeof(int), &current_layer->nNeurons);
 
         // execute the kernel
-        global_work_size = current_layer->getnNeurons();
+        size_t global_work_size = current_layer->getnNeurons();
         err = clEnqueueNDRangeKernel(command_queue, backprop_error_kernel, 1, NULL, &global_work_size, NULL, 0, NULL, NULL);
     }
     clFinish(command_queue);
@@ -455,12 +443,11 @@ void Net::updateWeights()
         Layer *current_layer = layers[i];
 
         err = clSetKernelArg(update_weights_kernel, 0, sizeof(cl_mem), &current_layer->internal_errors_buffer);
-        err = clSetKernelArg(update_weights_kernel, 1, sizeof(cl_mem), &current_input_buffer);
-        err = clSetKernelArg(update_weights_kernel, 2, sizeof(cl_mem), &current_layer->weights_buffer);
-        err = clSetKernelArg(update_weights_kernel, 3, sizeof(cl_mem), &current_layer->biases_buffer);
-        err = clSetKernelArg(update_weights_kernel, 4, sizeof(float), &learningRate);
-        err = clSetKernelArg(update_weights_kernel, 5, sizeof(int), &current_layer->nInputs);
-        err = clSetKernelArg(update_weights_kernel, 6, sizeof(int), &current_layer->nNeurons);
+        err |= clSetKernelArg(update_weights_kernel, 1, sizeof(cl_mem), &current_input_buffer);
+        err |= clSetKernelArg(update_weights_kernel, 2, sizeof(cl_mem), &current_layer->weights_buffer);
+        err |= clSetKernelArg(update_weights_kernel, 3, sizeof(float), &learningRate);
+        err |= clSetKernelArg(update_weights_kernel, 4, sizeof(int), &current_layer->nInputs);
+        err |= clSetKernelArg(update_weights_kernel, 5u, sizeof(int), &current_layer->nNeurons);
 
         size_t global_work_size[2] = {(size_t)current_layer->getnNeurons(), (size_t)current_layer->getnInputs()};
 
@@ -468,6 +455,24 @@ void Net::updateWeights()
 
         current_input_buffer = current_layer->activated_outputs_buffer;
     }
+    clFinish(command_queue);
+}
+
+void Net::injectErrorDirectly(float network_error, float error_gain)
+{
+    cl_int err;
+    Layer *last_layer = layers[nLayers - 1];
+
+    err = clSetKernelArg(calculate_output_error_kernel, 0, sizeof(float), &network_error);
+    err |= clSetKernelArg(calculate_output_error_kernel, 1, sizeof(cl_mem), &last_layer->sum_outputs_buffer);
+    err |= clSetKernelArg(calculate_output_error_kernel, 2, sizeof(cl_mem), &last_layer->internal_errors_buffer);
+    err |= clSetKernelArg(calculate_output_error_kernel, 3, sizeof(float), &error_gain);
+    checkError(err, "Setting calculate_output_error_kernel_with_host_error arguments");
+
+    size_t global_work_size = last_layer->getnNeurons();
+    err = clEnqueueNDRangeKernel(command_queue, calculate_output_error_kernel, 1, NULL, &global_work_size, NULL, 0, NULL, NULL);
+    checkError(err, "Enqueuing calculate_output_error_kernel_with_host_error");
+
     clFinish(command_queue);
 }
 //*************************************************************************************
