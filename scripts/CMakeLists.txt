@@ -72,6 +72,7 @@ foreach(target TestServoMotor TestSpeedChange TestBotMotion TestLineFollowing)
         Threads::Threads
         OpenCL::OpenCL
     )
+    target_compile_definitions(${target} PRIVATE CL_TARGET_OPENCL_VERSION=300)
 endforeach()
 
 install(TARGETS TestServoMotor TestSpeedChange TestBotMotion TestLineFollowing RUNTIME DESTINATION bin)
