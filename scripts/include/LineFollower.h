@@ -97,8 +97,8 @@ private:
     int binary_threshold = 100;
 
     // learning rate and error gain
-    float learning_rate = 0.0001f;
-    float error_gain = 0.005;
+    float learning_rate = 0.01f;
+    float error_gain = 5;
 
     // controller parameters
     float last_error = 0.0;
