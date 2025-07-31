@@ -65,7 +65,7 @@ void LineFollower::start()
                 {
                     currentState = SEARCHING_TURN;
                     std::cout << "Line lost!" << std::endl;
-                    heading_error_integral = 0.0;
+                    error_integral = 0.0;
                     deltabot.Stop();
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 }
@@ -76,7 +76,7 @@ void LineFollower::start()
                     currentState = FOLLOWING;
                     std::cout << "Line re-found!" << std::endl;
                     last_error = 0.0;
-                    heading_error_integral = 0.0;
+                    error_integral = 0.0;
                 }
                 else
                 {
@@ -143,13 +143,10 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<fl
     cv::imshow("Binary Image", binary);
 
     cv::Rect roi_near_rect(0, frame.rows * 3 / 4, frame.cols, frame.rows / 4); // Near segment at the bottom
-    cv::Rect roi_far_rect(0, frame.rows * 2 / 4, frame.cols, frame.rows / 4);  // Far segment in the middle
 
     cv::Mat roi_near = binary(roi_near_rect); // Extract the near segment
-    cv::Mat roi_far = binary(roi_far_rect);   // Extract the far segment
 
     cv::Moments m_near = cv::moments(roi_near, true); // Calculate moments for the near segment
-    cv::Moments m_far = cv::moments(roi_far, true);   // Calculate moments for the far segment
 
     bool line_found_near = false;
     if (m_near.m00 > 100) // Check if the near segment has enough mass
@@ -163,18 +160,6 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<fl
         error_near = 0.0; // If no line is found in the near segment, set error to 0
     }
 
-    bool line_found_far = false;
-    if (m_far.m00 > 100) // Check if the far segment has enough mass
-    {
-        float cx = m_far.m10 / m_far.m00;
-        error_far = (cx - roi_far.cols / 2.0) / (roi_far.cols / 2.0); // Calculate error based on the center of mass
-        line_found_far = true;
-    }
-    else
-    {
-        error_far = error_near; // If no line is found in the far segment, use the near segment error
-    }
-
     inputs.clear();
     int segment_width = roi_near.cols / input_neurons;
     for (int i = 0; i < input_neurons; ++i)
@@ -185,9 +170,8 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<fl
     }
 
     cv::rectangle(frame, roi_near_rect, cv::Scalar(0, 255, 0), 2);
-    cv::rectangle(frame, roi_far_rect, cv::Scalar(0, 0, 255), 2);
 
-    return line_found_near || line_found_far;
+    return line_found_near;
 }
 
 void LineFollower::UpdateAndTrain(const std::vector<float> &inputs, float error_near, float error_far)
@@ -201,15 +185,12 @@ void LineFollower::UpdateAndTrain(const std::vector<float> &inputs, float error_
     float error_derivative = error_near - last_error; // Calculate the derivative of the error
     float d_term = error_derivative * derivative_gain; // Derivative term for the controller
 
-    float heading_error = error_far - error_near; // Calculate the heading error based on the near and far segment errors
-    float h_term = heading_error * heading_gain;   // Heading term for the controller
-
-    heading_error_integral += heading_error; // Update the integral of the heading error
+    error_integral += error_near; // Update the integral of the heading error
     float integral_limit = 20.0; // Limit for the integral term to prevent windup
-    heading_error_integral = std::max(-integral_limit, std::min(integral_limit, heading_error_integral)); // Clamp the integral term
-    float i_term = heading_error_integral * integral_gain; // Integral term for the controller
+    error_integral = std::max(-integral_limit, std::min(integral_limit, error_integral)); // Clamp the integral term
+    float i_term = error_integral * integral_gain; // Integral term for the controller
 
-    float total_steering_adjustment = p_term + h_term + d_term + i_term; // Total steering adjustment based on the controller
+    float total_steering_adjustment = p_term + d_term + i_term; // Total steering adjustment based on the controller
 
     last_error = error_near; // Update the last error for the next iteration
 
@@ -230,8 +211,7 @@ void LineFollower::UpdateAndTrain(const std::vector<float> &inputs, float error_
     neuralNet->customBackProp(network_error,error_gain);
     neuralNet->updateWeights();
 
-    std::cout << "Err(Near/Far): " << std::fixed << std::setprecision(2) << error_near << "/" << error_far
-              << "| HeadingErr: " << heading_error
-              << "| Steer(P/H): " << p_term << "/" << h_term
+    std::cout << "Err: " << error_near
+              << "| Steer: " << p_term
               << "| Speed L/R: " << left_speed << "/" << right_speed << std::endl;
 }
