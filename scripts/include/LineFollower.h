@@ -59,7 +59,7 @@ private:
      * @param error_far : Reference to store the error calculated from the far segment
      * @return true if a line is found, false otherwise
      */
-    bool ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<double> &inputs, double &error_near, double &error_far);
+    bool ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<float> &inputs, float &error_near, float &error_far);
 
     /**
      * @brief Updates the neural network with the current inputs and trains it
@@ -69,7 +69,7 @@ private:
      * @note The function sets the inputs to the neural network, propagates the inputs,
      * and performs backpropagation to update the weights based on the errors.
      */
-    void UpdateAndTrain(const std::vector<double> &inputs, double error_near, double error_far);
+    void UpdateAndTrain(const std::vector<float> &inputs, float error_near, float error_far);
 
     // Member variables
     DeltaBot &deltabot;
@@ -77,7 +77,7 @@ private:
     CameraFPSTracker fpsTracker;
 
     RobotState currentState = FOLLOWING; // Initial state is following the line
-    double last_known_error = 0.0;       // Last known error for line following
+    float last_known_error = 0.0;       // Last known error for line following
 
     long last_process_frame_id = -1; // Last processed frame ID to avoid reprocessing the same frame
 
@@ -97,16 +97,16 @@ private:
     int binary_threshold = 100;
 
     // learning rate and error gain
-    double learning_rate = 0.01f;
-    double error_gain = 5;
+    float learning_rate = 0.01f;
+    float error_gain = 0.05;
 
     // controller parameters
-    double last_error = 0.0;
-    double heading_error_integral = 0.0;
+    float last_error = 0.0;
+    float heading_error_integral = 0.0;
     float proportional_gain = 2.0f; // Proportional gain for the controller
-    float derivative_gain = 0.0f;   // Derivative gain for the controller
-    float heading_gain = 0.0f;      // Heading gain for the controller
-    float integral_gain = 0.0f;    // Integral gain for the controller
+    float derivative_gain = 0.2f;   // Derivative gain for the controller
+    float heading_gain = 2.5f;      // Heading gain for the controller
+    float integral_gain = 0.05f;    // Integral gain for the controller
 };
 
 #endif
