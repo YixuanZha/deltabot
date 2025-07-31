@@ -48,9 +48,9 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
         std::vector<float> temp_weights(numNeurons * nInputForLayer);
         std::vector<float> temp_biases(numNeurons);
         for (size_t j = 0; j < temp_weights.size(); ++j)
-            temp_weights[j] = ((float)rand() / (RAND_MAX));
+            temp_weights[j] = (((float)rand() / (RAND_MAX)) * 2.0f) - 1.0f;
         for (size_t j = 0; j < temp_biases.size(); ++j)
-            temp_biases[j] = ((float)rand() / (RAND_MAX));
+            temp_biases[j] = (((float)rand() / (RAND_MAX)) * 2.0f) - 1.0f;
 
         layers[i]->weights_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, weights_size, temp_weights.data(), &err);
         checkError(err, "Weights buffer creation");
