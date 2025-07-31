@@ -98,7 +98,7 @@ private:
 
     // learning rate and error gain
     float learning_rate = 0.01f;
-    float error_gain = 5;
+    float error_gain = 0.5;
 
     // controller parameters
     float last_error = 0.0;
