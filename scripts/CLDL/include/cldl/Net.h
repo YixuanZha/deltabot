@@ -94,14 +94,15 @@ private:
     // OpenCL member variable
     cl_platform_id platform_id;
     cl_device_id device_id;
-
+    
+    // OpenCL kernel objects
     cl_program program;
-
     cl_kernel forward_prop_kernel;
     cl_kernel backprop_error_kernel;
     cl_kernel update_weights_kernel;
     cl_kernel calculate_output_error_kernel;
 
+    // OpenCL buffers
     cl_mem net_input_buffer = nullptr;
 
     void initCL();

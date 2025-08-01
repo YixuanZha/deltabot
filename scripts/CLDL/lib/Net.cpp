@@ -11,7 +11,7 @@
 #include <string>
 using namespace std;
 
-void checkError(cl_int err, const char *operations)
+void checkError(cl_int err, const char *operations) // Check for OpenCL errors
 {
     if (err != CL_SUCCESS)
     {
@@ -47,16 +47,18 @@ Net::Net(int _nLayers, int *_nNeurons, int _nInputs, int _nInternalErrors)
 
         std::vector<float> temp_weights(numNeurons * nInputForLayer);
         std::vector<float> temp_biases(numNeurons);
-        for (size_t j = 0; j < temp_weights.size(); ++j)
+        for (size_t j = 0; j < temp_weights.size(); ++j) // Initialize weights randomly
             temp_weights[j] = (((float)rand() / (RAND_MAX)) * 2.0f) - 1.0f;
-        for (size_t j = 0; j < temp_biases.size(); ++j)
+        for (size_t j = 0; j < temp_biases.size(); ++j) // Initialize biases randomly
             temp_biases[j] = (((float)rand() / (RAND_MAX)) * 2.0f) - 1.0f;
 
+        // Create OpenCL buffers for weights and biases
         layers[i]->weights_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, weights_size, temp_weights.data(), &err);
         checkError(err, "Weights buffer creation");
         layers[i]->biases_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, biases_size, temp_biases.data(), &err);
         checkError(err, "Biases buffer creation");
 
+        // Create OpenCL buffers for outputs and errors
         layers[i]->sum_outputs_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, biases_size, NULL, &err);
         checkError(err, "Sum outputs buffer creation");
         layers[i]->activated_outputs_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, biases_size, NULL, &err);
@@ -77,6 +79,7 @@ Net::~Net()
 {
     std::cout << "Releasing OpenCL resources...." << std::endl;
 
+    // Release OpenCL resources
     for (int i = 0; i < nLayers; i++)
     {
         clReleaseMemObject(layers[i]->weights_buffer);
@@ -103,25 +106,25 @@ void Net::initCL()
     cl_int err;
 
     cl_uint num_platform;
-    clGetPlatformIDs(0, NULL, &num_platform);
+    clGetPlatformIDs(0, NULL, &num_platform); // Get the number of OpenCL platforms
     if (num_platform == 0)
     {
         std::cerr << "No OpenCL platform found" << std::endl;
         exit(1);
     }
     std::vector<cl_platform_id> platforms(num_platform);
-    clGetPlatformIDs(num_platform, platforms.data(), NULL);
+    clGetPlatformIDs(num_platform, platforms.data(), NULL); // Get the OpenCL platforms
     this->platform_id = platforms[0];
 
     cl_uint num_devices;
-    clGetDeviceIDs(this->platform_id, CL_DEVICE_TYPE_GPU, 0, NULL, &num_devices);
+    clGetDeviceIDs(this->platform_id, CL_DEVICE_TYPE_GPU, 0, NULL, &num_devices); // Get the number of GPU devices
     if (num_devices == 0)
     {
         std::cerr << "No GPU device found" << std::endl;
         exit(1);
     }
     std::vector<cl_device_id> devices(num_devices);
-    clGetDeviceIDs(this->platform_id, CL_DEVICE_TYPE_GPU, num_devices, devices.data(), NULL);
+    clGetDeviceIDs(this->platform_id, CL_DEVICE_TYPE_GPU, num_devices, devices.data(), NULL); // Get the GPU devices
     this->device_id = devices[0];
 
     this->context = clCreateContext(NULL, 1, &this->device_id, NULL, NULL, &err);
@@ -227,6 +230,7 @@ void Net::propInputs()
     {
         Layer *current_layer = layers[i];
 
+        // Set kernel arguments for forward propagation
         err = clSetKernelArg(forward_prop_kernel, 0, sizeof(cl_mem), &current_input_buffer);
         err |= clSetKernelArg(forward_prop_kernel, 1, sizeof(cl_mem), &current_layer->weights_buffer);
         err |= clSetKernelArg(forward_prop_kernel, 2, sizeof(cl_mem), &current_layer->biases_buffer);
@@ -236,6 +240,7 @@ void Net::propInputs()
 
         size_t global_work_size = current_layer->getnNeurons();
 
+        // Enqueue the kernel for execution
         err = clEnqueueNDRangeKernel(command_queue, forward_prop_kernel, 1, NULL, &global_work_size, NULL, 0, NULL, NULL);
 
         current_input_buffer = current_layer->activated_outputs_buffer;
