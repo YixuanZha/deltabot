@@ -134,7 +134,7 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<fl
     cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
 
     cv::Scalar lower_black = cv::Scalar(0, 0, 0); // Define the range for black color in HSV space
-    cv::Scalar upper_black = cv::Scalar(180, 255, 100); // Define the range for black color in HSV space
+    cv::Scalar upper_black = cv::Scalar(180, 255, 80); // Define the range for black color in HSV space
 
     cv::inRange(hsv, lower_black, upper_black, binary); // Create a binary image where black pixels are set to 255 and others to 0
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)); // Create a rectangular kernel for morphological operations
