@@ -93,7 +93,7 @@ private:
     const static constexpr int output_layer = 1;
 
     // figure configuration
-    float base_speed = 4.0f;
+    float base_speed = 3.5f;
     int binary_threshold = 100;
 
     // learning rate and error gain
