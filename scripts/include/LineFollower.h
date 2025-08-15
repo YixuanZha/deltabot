@@ -96,14 +96,21 @@ private:
     float base_speed = 3.0f;
     int binary_threshold = 100;
 
-    // learning rate and error gain
+    // learning rate
     float learning_rate = 0.01f;
-    float error_gain = 5;
 
     // controller parameters
     float last_error = 0.0;
     float error_integral = 0.0;
-    float proportional_gain = 2.0f; // Proportional gain for the controller
+    float proportional_gain = 1.0f; // Proportional gain for the controller
+    float kp_min = 0.2f; // Minimum proportional gain
+    float kp_max = 3.0f; // Maximum proportional gain
+    float ec_lp = 0.0f; // Low-pass filter for error correction
+    float ec_alpha = 0.9f; // Low-pass filter alpha
+    int train_counter = 0; // Counter for training iterations
+    int train_every_n = 2; // Train the model every n frames
+    float error_gain = 0.1f; // Error gain for the controller
+
     float derivative_gain = 0.2f;   // Derivative gain for the controller
     float integral_gain = 0.02f;    // Integral gain for the controller
 };

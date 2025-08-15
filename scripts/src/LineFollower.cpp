@@ -133,12 +133,12 @@ bool LineFollower::ProcessFrameAndGetInputs(const cv::Mat &frame, std::vector<fl
     cv::Mat hsv, binary;
     cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
 
-    cv::Scalar lower_black = cv::Scalar(0, 0, 0); // Define the range for black color in HSV space
+    cv::Scalar lower_black = cv::Scalar(0, 0, 0);      // Define the range for black color in HSV space
     cv::Scalar upper_black = cv::Scalar(180, 255, 80); // Define the range for black color in HSV space
 
-    cv::inRange(hsv, lower_black, upper_black, binary); // Create a binary image where black pixels are set to 255 and others to 0
+    cv::inRange(hsv, lower_black, upper_black, binary);                         // Create a binary image where black pixels are set to 255 and others to 0
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)); // Create a rectangular kernel for morphological operations
-    cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, kernel); // Apply closing operation to fill small holes in the binary image
+    cv::morphologyEx(binary, binary, cv::MORPH_CLOSE, kernel);                  // Apply closing operation to fill small holes in the binary image
 
     cv::imshow("Binary Image", binary);
 
@@ -178,17 +178,18 @@ void LineFollower::UpdateAndTrain(const std::vector<float> &inputs, float error_
 {
     neuralNet->setInputs(inputs.data());
     neuralNet->propInputs();
-    float nn_steering_output = neuralNet->getOutput(0); // Get the neural network output for steering
+    float nn_raw = neuralNet->getOutput(0);
+    float Kp_adapt = kp_min + (nn_raw + 1.0f) * 0.5f * (kp_max - kp_min);
 
-    float p_term = nn_steering_output * proportional_gain; // Proportional term for the controller
+    float p_term = Kp_adapt * error_near; // Proportional term for the controller
 
-    float error_derivative = error_near - last_error; // Calculate the derivative of the error
+    float error_derivative = error_near - last_error;  // Calculate the derivative of the error
     float d_term = error_derivative * derivative_gain; // Derivative term for the controller
 
-    error_integral += error_near; // Update the integral of the heading error
-    float integral_limit = 20.0; // Limit for the integral term to prevent windup
+    error_integral += error_near;                                                         // Update the integral of the heading error
+    float integral_limit = 20.0;                                                          // Limit for the integral term to prevent windup
     error_integral = std::max(-integral_limit, std::min(integral_limit, error_integral)); // Clamp the integral term
-    float i_term = error_integral * integral_gain; // Integral term for the controller
+    float i_term = error_integral * integral_gain;                                        // Integral term for the controller
 
     float total_steering_adjustment = p_term + d_term + i_term; // Total steering adjustment based on the controller
 
@@ -201,15 +202,12 @@ void LineFollower::UpdateAndTrain(const std::vector<float> &inputs, float error_
     right_speed = std::max(-10.0f, std::min(10.0f, right_speed)); // Clamp the speed values to a range of -10 to 10
     deltabot.SetMotorSpeed(left_speed, right_speed);              // Set the motor speeds based on the calculated adjustments
 
-    float network_error = error_near - nn_steering_output; // Calculate the error from the neural network output
-
-    // int lastLayerIndex = neuralNet->getnLayers() - 1;
-    // std::vector<int> injection_layers = {lastLayerIndex, 0};
-    // neuralNet->customBackProp(injection_layers, 0, amplified_error, Neuron::Value, false); // Perform backpropagation to update the weights based on the error
-    // neuralNet->updateWeights();
-    
-    neuralNet->customBackProp(network_error,error_gain);
-    neuralNet->updateWeights();
+    ec_lp = ec_alpha * ec_lp + (1.0f - ec_alpha) * error_near; // Low-pass filter for error correction
+    if (++train_counter % train_every_n == 0) // Train the model every n frames
+    {
+        neuralNet->customBackProp(-ec_lp, error_gain); // Perform backpropagation with the low-pass filtered error
+        neuralNet->updateWeights();
+    }
 
     std::cout << "Err: " << error_near
               << "| Steer: " << p_term
